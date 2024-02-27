@@ -1,6 +1,7 @@
 export const DEFAULT_IHEIGHT = 8200
 export const MIN_IHEIGHT = 1500
 export const MAX_IHEIGHT = 25000
+export const IHEIGHT_STEP = 250
 
 export function isValidUrl (url) {
   if (!url) return ''
@@ -10,6 +11,10 @@ export function isValidUrl (url) {
   if (checkValidUrl(enhancedUrl)) return enhancedUrl
 
   return ''
+}
+
+export function isNumber (value) {
+  return /^[-]?[0-9]+$/.test(value)
 }
 
 function enhanceUrl (url) {
@@ -30,3 +35,16 @@ function checkValidUrl (url) {
 
   return urlPattern.test(url)
 }
+
+// TODO:
+/*
+*- poner un range para el iheight
+*- agregar la opcion para mover verticalmente los iframes
+- agregar el boton de reset to default
+- agregar el boton de back to top
+- notificacion de error si la página tiene restricciones de cargar en iframe
+- eliminar el bloqueo de localhost
+- eliminar el bloque de interactuar con la página
+- agregar los otros breakpoints y el scroll horizontal
+- actualizar la ayuda y los docs
+*/

@@ -17,9 +17,9 @@ function Modal ({
   return (
     <>
       <button className="btn btn-ghost" onClick={() => handleModalOpen()}>
-      <IconContext.Provider value={{ className: 'text-2xl' }}>
-        <BsInfoCircleFill />
-      </IconContext.Provider>
+        <IconContext.Provider value={{ className: 'text-2xl' }}>
+          <BsInfoCircleFill />
+        </IconContext.Provider>
       </button>
       <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">

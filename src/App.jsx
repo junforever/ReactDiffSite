@@ -24,7 +24,9 @@ function App () {
             iWidth: 0, // (window.innerWidth / 2) - 30,
             sideBySide: true,
             overlayMode: 'swipe',
-            opacity: 1
+            opacity: 1,
+            leftIFrameTop: '0',
+            rightIFrameTop: '0'
           }
     }
   )
@@ -58,16 +60,23 @@ function App () {
     }
   }
 
-  const handleIHeightChange = (isValid) => {
-    if (!isValid) {
-      const iHeightChanged = {
-        ...diffSettings,
-        iHeight: DEFAULT_IHEIGHT
-      }
-
-      setDiffSettings(iHeightChanged)
-      window.localStorage.setItem('diffSettingsLS', JSON.stringify(iHeightChanged))
+  const handleITopChange = (iframe) => {
+    const iTopChanged = {
+      ...diffSettings,
+      [iframe]: '0'
     }
+
+    setDiffSettings(iTopChanged)
+    window.localStorage.setItem('diffSettingsLS', JSON.stringify(iTopChanged))
+  }
+
+  const handleOnPixelAdjusterChange = (e) => {
+    const diffSettingsChanged = {
+      ...diffSettings,
+      [e.currentTarget.name]: e.currentTarget.dataset.action === 'change' ? e.currentTarget.value : (e.currentTarget.dataset.action === 'up' ? parseInt(diffSettings[e.currentTarget.name]) - 1 : parseInt(diffSettings[e.currentTarget.name]) + 1)
+    }
+    setDiffSettings(diffSettingsChanged)
+    window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
 
   return (
@@ -81,16 +90,19 @@ function App () {
         diffSettings={diffSettings}
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleBreakPointChange={ handleBreakPointChange }
+        handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
       />
       <DiffIFrames debounceInputs= {
           {
             leftUrl: useDebounce(diffInput.leftUrl, 1000),
             rightUrl: useDebounce(diffInput.rightUrl, 1000),
             iHeightDebounce: useDebounce(diffSettings.iHeight, 1000),
+            leftIFrameTopDebounce: useDebounce(diffSettings.leftIFrameTop, 500),
+            rightIFrameTopDebounce: useDebounce(diffSettings.rightIFrameTop, 500),
             ...diffSettings
           }
         }
-        handleIHeightChange= { handleIHeightChange }
+        handleITopChange= {handleITopChange}
       />
     </div>
   )

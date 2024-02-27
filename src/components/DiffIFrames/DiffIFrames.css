@@ -19,3 +19,8 @@
 .mockup-browser-toolbar .input.input--flat::after {
   display: none;
 }
+
+.mockup-browser .mockup-browser-toolbar.mockup-browser-toolbar--diff {
+  margin: 0;
+  padding: 0.75rem 0;
+}

@@ -3,11 +3,11 @@ import { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 import { IconContext } from 'react-icons'
-import { isValidUrl } from '../../utils'
+import { isValidUrl, isNumber } from '../../utils'
 
 function DiffIFrames ({
   debounceInputs,
-  handleIHeightChange
+  handleITopChange
 }) {
   const [urlValidated, setUrlValidated] = useState({
     leftUrl: '',
@@ -28,9 +28,13 @@ function DiffIFrames ({
   let eventStart = false
 
   useEffect(() => {
-    const value = debounceInputs.iHeightDebounce
-    if (isNaN(value) || value < 1500 || value > 20000) {
-      handleIHeightChange(false)
+    if (!isNumber(debounceInputs.leftIFrameTopDebounce)) {
+      handleITopChange('leftIFrameTop')
+      return
+    }
+
+    if (!isNumber(debounceInputs.rightIFrameTopDebounce)) {
+      handleITopChange('rightIFrameTop')
       return
     }
 
@@ -69,7 +73,15 @@ function DiffIFrames ({
       rightUrl: rightUrlValidated,
       leftUrl: leftUrlValidated
     })
-  }, [debounceInputs.iHeightDebounce, debounceInputs.iWidth, debounceInputs.sideBySide, debounceInputs.leftUrl, debounceInputs.rightUrl])
+  }, [
+    debounceInputs.iHeightDebounce,
+    debounceInputs.iWidth,
+    debounceInputs.sideBySide,
+    debounceInputs.leftUrl,
+    debounceInputs.rightUrl,
+    debounceInputs.leftIFrameTopDebounce,
+    debounceInputs.rightIFrameTopDebounce
+  ])
 
   const swipeHandleDown = (e) => {
     e.preventDefault()
@@ -129,8 +141,9 @@ function DiffIFrames ({
           }}
         >
           <div
-            className="mockup-browser-toolbar overflow-hidden"
+            className="mockup-browser-toolbar overflow-hidden mockup-browser-toolbar--diff relative bg-base-300"
             style={{
+              zIndex: 5,
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
             }}
           >
@@ -152,12 +165,12 @@ function DiffIFrames ({
           </div>
           <iframe
             scrolling="no"
-            // src={ debounceInputs.leftUrl }
             src={ urlValidated.leftUrl }
             name="leftIFrame"
             onLoad={() => setIframesLoaded({ ...iFramesLoaded, leftIFrame: true })}
-            className="h-full pointer-events-none overflow-hidden"
+            className="h-full pointer-events-none overflow-hidden relative"
             style={{
+              top: `${debounceInputs.leftIFrameTopDebounce}px`,
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
             }}
           ></iframe>
@@ -171,8 +184,9 @@ function DiffIFrames ({
           }}
         >
           <div
-            className="mockup-browser-toolbar overflow-hidden"
+            className="mockup-browser-toolbar overflow-hidden mockup-browser-toolbar--diff relative bg-base-300"
             style={{
+              zIndex: 5,
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
             }}
           >
@@ -197,8 +211,9 @@ function DiffIFrames ({
             src={ urlValidated.rightUrl }
             name="rightIFrame"
             onLoad={() => setIframesLoaded({ ...iFramesLoaded, rightIFrame: true })}
-            className="h-full pointer-events-none overflow-hidden"
+            className="h-full pointer-events-none overflow-hidden relative"
             style={{
+              top: `${debounceInputs.rightIFrameTopDebounce}px`,
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
             }}
           ></iframe>
@@ -222,7 +237,7 @@ function DiffIFrames ({
 
 DiffIFrames.propTypes = {
   debounceInputs: PropTypes.object.isRequired,
-  handleIHeightChange: PropTypes.func.isRequired
+  handleITopChange: PropTypes.func.isRequired
 }
 
 export default DiffIFrames
