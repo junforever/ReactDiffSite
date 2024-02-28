@@ -11,6 +11,7 @@ The DiffSite Tool is a websites comparison tool built with React. It enables use
 - Vite 5.1.0
 - DaisyUI 4.7.2
 - Node 18.18.2
+- React Icons
 
 ## Features
 

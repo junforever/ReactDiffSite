@@ -3,14 +3,15 @@ import DiffInput from './components/DiffInput'
 import DiffSettings from './components/DiffSettings'
 import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
+import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_IHEIGHT } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS } from './utils'
 
 function App () {
   const [diffInput, setDiffInput] = useState(
     () => {
       const diffInputLS = window.localStorage.getItem('diffInputLS')
-      return diffInputLS !== null ? JSON.parse(diffInputLS) : { leftUrl: '', rightUrl: '' }
+      return diffInputLS !== null ? JSON.parse(diffInputLS) : DEFAULT_DIFF_INPUT
     }
   )
 
@@ -19,15 +20,7 @@ function App () {
       const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
       return diffSettingsLS !== null
         ? JSON.parse(diffSettingsLS)
-        : {
-            iHeight: DEFAULT_IHEIGHT,
-            iWidth: 0, // (window.innerWidth / 2) - 30,
-            sideBySide: true,
-            overlayMode: 'swipe',
-            opacity: 1,
-            leftIFrameTop: '0',
-            rightIFrameTop: '0'
-          }
+        : DEFAULT_DIFF_SETTINGS
     }
   )
 
@@ -78,6 +71,13 @@ function App () {
     setDiffSettings(diffSettingsChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
+  const handleResetSettings = () => {
+    setDiffInput(DEFAULT_DIFF_INPUT)
+    window.localStorage.setItem('diffInputLS', JSON.stringify(DEFAULT_DIFF_INPUT))
+
+    setDiffSettings(DEFAULT_DIFF_SETTINGS)
+    window.localStorage.setItem('diffSettingsLS', JSON.stringify(DEFAULT_DIFF_SETTINGS))
+  }
 
   return (
     <div className="flex flex-col gap-y-6 p-4">
@@ -91,6 +91,7 @@ function App () {
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleBreakPointChange={ handleBreakPointChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
+        handleResetSettings= { handleResetSettings }
       />
       <DiffIFrames debounceInputs= {
           {
@@ -104,6 +105,7 @@ function App () {
         }
         handleITopChange= {handleITopChange}
       />
+      <BackToTop />
     </div>
   )
 }

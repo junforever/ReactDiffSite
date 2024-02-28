@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { BsLayoutSplit } from 'react-icons/bs'
 import { MdContentCopy } from 'react-icons/md'
+import { GrPowerReset } from 'react-icons/gr'
 import { IconContext } from 'react-icons'
 import { MIN_IHEIGHT, MAX_IHEIGHT } from '../../utils'
 import PixelAdjuster from '../PixelAdjuster'
@@ -10,7 +11,8 @@ function DiffSettings ({
   diffSettings,
   handleDiffSettingsChange,
   handleBreakPointChange,
-  handleOnPixelAdjusterChange
+  handleOnPixelAdjusterChange,
+  handleResetSettings
 }) {
   const [isLgView, setIsLgView] = useState(true)
   const btnStyles = {
@@ -218,6 +220,16 @@ function DiffSettings ({
           />
         </div>
       </div>
+
+      {/* third row settings */}
+      <div className="flex flex-row items-center justify-center mt-4">
+        <button className="btn" onClick={() => handleResetSettings()}>
+          Reset Settings to Default
+          <IconContext.Provider value={{ className: 'text-sm' }}>
+            <GrPowerReset />
+          </IconContext.Provider>
+        </button>
+      </div>
     </section>
   )
 }
@@ -226,6 +238,7 @@ DiffSettings.propTypes = {
   diffSettings: PropTypes.object.isRequired,
   handleDiffSettingsChange: PropTypes.func.isRequired,
   handleBreakPointChange: PropTypes.func.isRequired,
-  handleOnPixelAdjusterChange: PropTypes.func.isRequired
+  handleOnPixelAdjusterChange: PropTypes.func.isRequired,
+  handleResetSettings: PropTypes.func.isRequired
 }
 export default DiffSettings

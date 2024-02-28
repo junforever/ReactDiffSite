@@ -34,7 +34,7 @@ function Navbar () {
         />
       </div>
       <div className="navbar-center">
-        <h2 className="text-xl font-medium tracking-widest">Bankrate DiffSite Tool</h2>
+        <h2 className="text-xl font-medium tracking-wider">Bankrate DiffSite Tool</h2>
       </div>
       <div className="navbar-end mr-4">
         <label className="swap swap-rotate">
