@@ -124,7 +124,7 @@ function DiffIFrames ({
 
   return (
     <section
-      className={`flex flex-row relative justify-center items-start ${!debounceInputs.sideBySide ? `dif-mode-overlay dif-mode-overlay--${debounceInputs.overlayMode}` : ''}`}
+      className={`diff-iframes-section flex flex-row relative justify-center items-start ${!debounceInputs.sideBySide ? `dif-mode-overlay dif-mode-overlay--${debounceInputs.overlayMode}` : ''}`}
     >
       <div
         ref={iFramesContainer}

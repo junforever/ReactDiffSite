@@ -9,6 +9,7 @@ import PixelAdjuster from '../PixelAdjuster'
 
 function DiffSettings ({
   diffSettings,
+  settingsAreVisible,
   handleDiffSettingsChange,
   handleBreakPointChange,
   handleOnPixelAdjusterChange,
@@ -20,6 +21,7 @@ function DiffSettings ({
     borderColor: 'slategrey'
   }
 
+  // This functionality is for disable the side by side comparison mode for tablets and mobile
   const resizeObserver = new ResizeObserver((entries) => {
     const { width } = entries[0].contentRect
     if (width <= 1007) {
@@ -49,7 +51,7 @@ function DiffSettings ({
   }, [isLgView])
 
   return (
-    <section className='flex flex-col sticky top-0 z-20 bg-base-300 rounded-box p-4 pb-6 gap-y-2'>
+    <section className={`diff-settings-section flex flex-col sticky top-0 z-20 bg-base-300 rounded-box p-4 pb-6 gap-y-2 ${!settingsAreVisible ? 'invisible' : ''}`}>
       {/* first row settings */}
       <div className="flex flex-col items-center gap-y-6 sm:flex-row justify-center sm:items-start gap-x-8 flex-wrap">
         {/* iframe height */}
@@ -225,7 +227,7 @@ function DiffSettings ({
       <div className="flex flex-row items-center justify-center mt-4">
         <button className="btn" onClick={() => handleResetSettings()}>
           Reset Settings to Default
-          <IconContext.Provider value={{ className: 'text-sm' }}>
+          <IconContext.Provider value={{ className: 'text-xl' }}>
             <GrPowerReset />
           </IconContext.Provider>
         </button>
@@ -236,6 +238,7 @@ function DiffSettings ({
 
 DiffSettings.propTypes = {
   diffSettings: PropTypes.object.isRequired,
+  settingsAreVisible: PropTypes.bool.isRequired,
   handleDiffSettingsChange: PropTypes.func.isRequired,
   handleBreakPointChange: PropTypes.func.isRequired,
   handleOnPixelAdjusterChange: PropTypes.func.isRequired,

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DiffInput from './components/DiffInput'
 import DiffSettings from './components/DiffSettings'
 import DiffIFrames from './components/DiffIFrames'
@@ -6,8 +6,12 @@ import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
 import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS } from './utils'
+import ShowHideButton from './components/ShowHideButton'
 
 function App () {
+  const [bttIsVisible, setBttIsVisible] = useState(false)
+  const [shbIsVisible, setShbIsVisible] = useState(false)
+  const [settingsAreVisible, setSettingsAreVisible] = useState(true)
   const [diffInput, setDiffInput] = useState(
     () => {
       const diffInputLS = window.localStorage.getItem('diffInputLS')
@@ -79,6 +83,35 @@ function App () {
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(DEFAULT_DIFF_SETTINGS))
   }
 
+  const handleShowHideClick = () => { setSettingsAreVisible((prevValue) => !prevValue) }
+
+  const scrollEventListener = () => {
+    // const settingsSection = document.querySelector('.diff-settings-section')
+    const iframesSection = document.querySelector('.diff-iframes-section')
+    // console.log('scroll', window.scrollY)
+    // console.log('element', settingsSection.getBoundingClientRect())
+    // console.log('iframes', iframesSection.getBoundingClientRect())
+    if (window.scrollY > 300) {
+      setBttIsVisible(true)
+    } else {
+      setBttIsVisible(false)
+    }
+
+    if (window.scrollY > 0 && iframesSection.getBoundingClientRect().top <= 200) {
+      setShbIsVisible(true)
+    } else {
+      setShbIsVisible(false)
+      setSettingsAreVisible(true)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', scrollEventListener)
+    return () => {
+      window.removeEventListener('scroll', scrollEventListener)
+    }
+  }, [])
+
   return (
     <div className="flex flex-col gap-y-6 p-4">
       <Navbar />
@@ -88,6 +121,7 @@ function App () {
       />
       <DiffSettings
         diffSettings={diffSettings}
+        settingsAreVisible={settingsAreVisible}
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleBreakPointChange={ handleBreakPointChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
@@ -105,7 +139,8 @@ function App () {
         }
         handleITopChange= {handleITopChange}
       />
-      <BackToTop />
+      <BackToTop isVisible={bttIsVisible} />
+      <ShowHideButton isVisible={shbIsVisible} isComponentVisible handleShowHideClick={handleShowHideClick}/>
     </div>
   )
 }

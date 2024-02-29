@@ -1,24 +1,10 @@
-import { useState, useEffect } from 'react'
 import { FaArrowUp } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
+import PropTypes from 'prop-types'
 
-function BackToTop () {
-  const [isVisible, setIsVisible] = useState(false)
-  const scrollEventListener = () => {
-    if (window.scrollY > 300) {
-      setIsVisible(true)
-    } else {
-      setIsVisible(false)
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('scroll', scrollEventListener)
-    return () => {
-      window.removeEventListener('scroll', scrollEventListener)
-    }
-  }, [])
-
+function BackToTop ({
+  isVisible
+}) {
   return (
     <>
       {isVisible && (
@@ -33,4 +19,9 @@ function BackToTop () {
     </>
   )
 }
+
+BackToTop.propTypes = {
+  isVisible: PropTypes.bool.isRequired
+}
+
 export default BackToTop
