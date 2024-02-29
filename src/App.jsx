@@ -5,7 +5,7 @@ import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
 import ShowHideButton from './components/ShowHideButton'
 
 function App () {
@@ -20,15 +20,32 @@ function App () {
       return true
     }
   )
+  // const [iFramesWidth, setIFramesWidth] = useState(
+  //   () => {
+  //     const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
+  //     let iWidth = DEFAULT_DIFF_SETTINGS.iWidth
+  //     let sideBySide = DEFAULT_DIFF_SETTINGS.sideBySide
+  //     if (diffSettingsLS !== null) {
+  //       const settings = JSON.parse(diffSettingsLS)
+  //       iWidth = settings.iWidth
+  //       sideBySide = settings.sideBySide
+  //     }
+
+  //     return handleWidthResize(sideBySide, iWidth)
+  //   }
+  // )
 
   // This functionality is for disable the side by side comparison mode for tablets and mobile
   const resizeObserver = new ResizeObserver((entries) => {
     const { width } = entries[0].contentRect
     if (width <= LARGE_BREAKPOINT) {
+      console.log('large')
       setIsLgView(false)
     } else {
+      console.log('no large')
       setIsLgView(true)
     }
+    // setIFramesWidth(handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth)))
   })
 
   // activate the resizeObserver only the first time
@@ -93,6 +110,11 @@ function App () {
     }
   )
 
+  useEffect(() => {
+    console.log('yes')
+    handleIWidthChange()
+  }, [diffSettings.iWidth, diffSettings.sideBySide])
+
   const handleDiffInputChange = (e) => {
     const diffInputChanged = {
       ...diffInput,
@@ -149,6 +171,17 @@ function App () {
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(DEFAULT_DIFF_SETTINGS))
   }
 
+  const handleIWidthChange = () => {
+    const conf = handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth))
+    console.log(conf, diffSettings.sideBySide, diffSettings.iWidth)
+    setDiffSettings({
+      ...diffSettings,
+      iFrameContainerWidth: conf.iFrameContainerWidth,
+      iFrameContainerPaddingRight: conf.iFrameContainerPaddingRight,
+      iFrameJustifyContent: conf.iFrameJustifyContent
+    })
+  }
+
   return (
     <div className="flex flex-col gap-y-6 p-4">
       <Navbar />
@@ -175,6 +208,7 @@ function App () {
           }
         }
         handleITopChange= {handleITopChange}
+        handleIWidthChange= {handleIWidthChange}
       />
       <BackToTop isVisible={bttIsVisible} />
       <ShowHideButton isVisible={shbIsVisible} isComponentVisible={settingsAreVisible} handleShowHideClick={handleShowHideClick}/>

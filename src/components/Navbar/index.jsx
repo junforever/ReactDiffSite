@@ -21,7 +21,7 @@ function Navbar () {
       <div className="navbar-start">
         <Modal
           btnText="How to use this tool?"
-          title="How to use the DiffSite Tool"
+          title="How to use the Site Diff Tool"
           content={`This is a simple websites comparison tool built with React.<br>
           It allows to compare two sites side by side or with an overlay effect.<br>
           Enter a valid URL in both input fields to start the comparison, in case a URL is invalid, the border of the navigation bar on the corresponding browser mock will turn red <br>
@@ -34,7 +34,7 @@ function Navbar () {
         />
       </div>
       <div className="navbar-center">
-        <h2 className="text-xl font-medium tracking-wider">Bankrate DiffSite Tool</h2>
+        <h2 className="text-xl font-medium tracking-wider">Bankrate Site Diff Tool</h2>
       </div>
       <div className="navbar-end">
         <label className="swap swap-rotate">

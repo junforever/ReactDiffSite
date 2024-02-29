@@ -7,7 +7,8 @@ import { isValidUrl, isNumber } from '../../utils'
 
 function DiffIFrames ({
   debounceInputs,
-  handleITopChange
+  handleITopChange,
+  handleIWidthChange
 }) {
   const [swiperPos, setSwiperPos] = useState(() => {
     return debounceInputs.iWidth === 0 ? window.innerWidth / 2 : debounceInputs.iWidth / 2
@@ -39,6 +40,7 @@ function DiffIFrames ({
 
   useEffect(() => {
     setSwiperPos(parseInt(debounceInputs.iWidth) === 0 ? iFramesContainer.current.getBoundingClientRect().width / 2 : parseInt(debounceInputs.iWidth) / 2)
+    // handleIWidthChange(debounceInputs.iWidth, debounceInputs.sideBySide)
   }, [
     debounceInputs.iWidth,
     debounceInputs.sideBySide
@@ -97,13 +99,18 @@ function DiffIFrames ({
 
   return (
     <section
-      className={`diff-iframes-section flex flex-row relative justify-center items-start ${!debounceInputs.sideBySide ? `dif-mode-overlay dif-mode-overlay--${debounceInputs.overlayMode}` : ''}`}
+      className={`diff-iframes-section flex flex-row relative items-start ${!debounceInputs.sideBySide ? `dif-mode-overlay dif-mode-overlay--${debounceInputs.overlayMode}` : ''}`}
+      style={{
+        width: debounceInputs.iFrameContainerWidth,
+        paddingRight: debounceInputs.iFrameContainerPaddingRight,
+        justifyContent: debounceInputs.iFrameJustifyContent
+      }}
     >
       <div
         ref={iFramesContainer}
         className='flex flex-row gap-x-6 relative justify-center items-start w-full' style={{
           height: `${debounceInputs.iHeightDebounce}px`,
-          width: debounceInputs.sideBySide ? '100%' : parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
+          width: debounceInputs.sideBySide ? '100%' : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
         }}>
         {/* left iframe */}
         <div
@@ -144,7 +151,7 @@ function DiffIFrames ({
               setLeftIFrameLoaded(true)
               setLeftIFrameAllowed(leftUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full pointer-events-none overflow-hidden relative"
+            className="h-full overflow-hidden relative"
             style={{
               top: `${debounceInputs.leftIFrameTopDebounce}px`,
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
@@ -190,7 +197,7 @@ function DiffIFrames ({
               setRightIFrameLoaded(true)
               setRightIFrameAllowed(rightUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full pointer-events-none overflow-hidden relative"
+            className="h-full overflow-hidden relative"
             style={{
               top: `${debounceInputs.rightIFrameTopDebounce}px`,
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
@@ -216,7 +223,8 @@ function DiffIFrames ({
 
 DiffIFrames.propTypes = {
   debounceInputs: PropTypes.object.isRequired,
-  handleITopChange: PropTypes.func.isRequired
+  handleITopChange: PropTypes.func.isRequired,
+  handleIWidthChange: PropTypes.func.isRequired
 }
 
 export default DiffIFrames

@@ -58,14 +58,14 @@ function DiffSettings ({
               <option value="599" data-breakpoint="classy-mb">Classy Mobile</option>
               {/* <option value="999" data-breakpoint="classy-sm">Classy Small</option> */}
               {/* <option value="1438" data-breakpoint="classy-md">Classy Medium</option> */}
-              {/* <option value="1441" data-breakpoint="classy-lg">Classy Large</option> */}
+              {/* <option value="1500" data-breakpoint="classy-lg">Classy Large</option> */}
             </optgroup>
 
             <optgroup label="Classy Breakpoints">
               <option value="639" data-breakpoint="treasury-mb">Treasury Mobile</option>
               {/* <option value="879" data-breakpoint="treasury-sm">Treasury Small</option> */}
               {/* <option value="1119" data-breakpoint="treasury-md">Treasury Medium</option> */}
-              {/* <option value="1121" data-breakpoint="treasury-lg">Treasury Large</option> */}
+              {/* <option value="1439" data-breakpoint="treasury-lg">Treasury Large</option> */}
             </optgroup>
 
             <optgroup label="Mobile Devices">
