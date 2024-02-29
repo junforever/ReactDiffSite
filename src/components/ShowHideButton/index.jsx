@@ -10,10 +10,10 @@ function ShowHideButton ({
   return (
     <>
       {isVisible && (
-        <button className="btn btn-circle btn-outline btn-primary fixed top-2 left-6 z-40" aria-label={`${isComponentVisible ? 'Hide' : 'Show'} settings`}
+        <button className="btn btn-circle btn-outline btn--medium btn-primary fixed top-2 left-6 z-40" aria-label={`${isComponentVisible ? 'Hide' : 'Show'} settings`}
           onClick={handleShowHideClick}
         >
-          <IconContext.Provider value={{ className: 'text-xl rotate-[135deg] transition-all' }}>
+          <IconContext.Provider value={{ className: `text-xl ${isComponentVisible ? 'rotate-[135deg]' : ''}  transition-all` }}>
             <FaPlus aria-hidden />
           </IconContext.Provider>
         </button>

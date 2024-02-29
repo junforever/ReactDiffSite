@@ -5,13 +5,78 @@ import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE } from './utils'
 import ShowHideButton from './components/ShowHideButton'
 
 function App () {
+  /* visualization states */
   const [bttIsVisible, setBttIsVisible] = useState(false)
   const [shbIsVisible, setShbIsVisible] = useState(false)
   const [settingsAreVisible, setSettingsAreVisible] = useState(true)
+  const [isLgView, setIsLgView] = useState(
+    () => {
+      const { width } = document.documentElement.getBoundingClientRect()
+      if (width <= LARGE_BREAKPOINT) return false
+      return true
+    }
+  )
+
+  // This functionality is for disable the side by side comparison mode for tablets and mobile
+  const resizeObserver = new ResizeObserver((entries) => {
+    const { width } = entries[0].contentRect
+    if (width <= LARGE_BREAKPOINT) {
+      setIsLgView(false)
+    } else {
+      setIsLgView(true)
+    }
+  })
+
+  // activate the resizeObserver only the first time
+  useEffect(() => {
+    resizeObserver.observe(document.documentElement)
+
+    return () => {
+      resizeObserver.unobserve(document.documentElement)
+    }
+  }, [])
+
+  // watch if the window is resized to disable the side by side comparison mode for tablets and mobile
+  useEffect(() => {
+    const { width } = document.documentElement.getBoundingClientRect()
+    if (!isLgView && width <= LARGE_BREAKPOINT && diffSettings.sideBySide) {
+      handleBreakPointChange()
+    }
+  }, [isLgView])
+
+  const handleShowHideClick = () => { setSettingsAreVisible((prevValue) => !prevValue) }
+
+  const scrollEventListener = () => {
+    const { width } = document.documentElement.getBoundingClientRect()
+    const iframesSection = document.querySelector('.diff-iframes-section')
+    const iframesTopDistance = width <= MOBILE_BREAKPOINT ? MOBILE_TOP_DISTANCE : OTHER_TOP_DISTANCE
+
+    if (window.scrollY > BTT_TOP_DISTANCE) {
+      setBttIsVisible(true)
+    } else {
+      setBttIsVisible(false)
+    }
+
+    if (window.scrollY > 0 && iframesSection.getBoundingClientRect().top <= iframesTopDistance) {
+      setShbIsVisible(true)
+    } else {
+      setShbIsVisible(false)
+      setSettingsAreVisible(true)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', scrollEventListener)
+    return () => {
+      window.removeEventListener('scroll', scrollEventListener)
+    }
+  }, [])
+
+  /* settings states */
   const [diffInput, setDiffInput] = useState(
     () => {
       const diffInputLS = window.localStorage.getItem('diffInputLS')
@@ -75,42 +140,14 @@ function App () {
     setDiffSettings(diffSettingsChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
+
   const handleResetSettings = () => {
     setDiffInput(DEFAULT_DIFF_INPUT)
     window.localStorage.setItem('diffInputLS', JSON.stringify(DEFAULT_DIFF_INPUT))
 
-    setDiffSettings(DEFAULT_DIFF_SETTINGS)
+    setDiffSettings(isLgView ? DEFAULT_DIFF_SETTINGS : { ...DEFAULT_DIFF_SETTINGS, sideBySide: false })
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(DEFAULT_DIFF_SETTINGS))
   }
-
-  const handleShowHideClick = () => { setSettingsAreVisible((prevValue) => !prevValue) }
-
-  const scrollEventListener = () => {
-    // const settingsSection = document.querySelector('.diff-settings-section')
-    const iframesSection = document.querySelector('.diff-iframes-section')
-    // console.log('scroll', window.scrollY)
-    // console.log('element', settingsSection.getBoundingClientRect())
-    // console.log('iframes', iframesSection.getBoundingClientRect())
-    if (window.scrollY > 300) {
-      setBttIsVisible(true)
-    } else {
-      setBttIsVisible(false)
-    }
-
-    if (window.scrollY > 0 && iframesSection.getBoundingClientRect().top <= 200) {
-      setShbIsVisible(true)
-    } else {
-      setShbIsVisible(false)
-      setSettingsAreVisible(true)
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('scroll', scrollEventListener)
-    return () => {
-      window.removeEventListener('scroll', scrollEventListener)
-    }
-  }, [])
 
   return (
     <div className="flex flex-col gap-y-6 p-4">
@@ -122,8 +159,8 @@ function App () {
       <DiffSettings
         diffSettings={diffSettings}
         settingsAreVisible={settingsAreVisible}
+        isLgView={isLgView}
         handleDiffSettingsChange={ handleDiffSettingsChange }
-        handleBreakPointChange={ handleBreakPointChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
         handleResetSettings= { handleResetSettings }
       />
@@ -140,7 +177,7 @@ function App () {
         handleITopChange= {handleITopChange}
       />
       <BackToTop isVisible={bttIsVisible} />
-      <ShowHideButton isVisible={shbIsVisible} isComponentVisible handleShowHideClick={handleShowHideClick}/>
+      <ShowHideButton isVisible={shbIsVisible} isComponentVisible={settingsAreVisible} handleShowHideClick={handleShowHideClick}/>
     </div>
   )
 }

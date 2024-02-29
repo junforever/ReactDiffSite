@@ -2,6 +2,13 @@ export const DEFAULT_IHEIGHT = 8200
 export const MIN_IHEIGHT = 1500
 export const MAX_IHEIGHT = 25000
 export const IHEIGHT_STEP = 250
+export const MOBILE_TOP_DISTANCE = 150
+export const OTHER_TOP_DISTANCE = 80
+export const BTT_TOP_DISTANCE = 300
+// according to the intersection observer
+export const LARGE_BREAKPOINT = 1007
+// according to the intersection observer
+export const MOBILE_BREAKPOINT = 624
 export const DEFAULT_DIFF_INPUT = {
   leftUrl: '',
   rightUrl: ''

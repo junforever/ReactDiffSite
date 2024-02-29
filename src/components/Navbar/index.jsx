@@ -17,7 +17,7 @@ function Navbar () {
   }
 
   return (
-    <div className="navbar bg-base-300 rounded-box">
+    <div className="navbar bg-base-300 rounded-box pr-3">
       <div className="navbar-start">
         <Modal
           btnText="How to use this tool?"
@@ -36,7 +36,7 @@ function Navbar () {
       <div className="navbar-center">
         <h2 className="text-xl font-medium tracking-wider">Bankrate DiffSite Tool</h2>
       </div>
-      <div className="navbar-end mr-4">
+      <div className="navbar-end">
         <label className="swap swap-rotate">
           {/* theme switcher */}
           <input

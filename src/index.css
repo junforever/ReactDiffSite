@@ -2,14 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --btn-medium-size: 2.5rem;
+  --btn-adjuster-padding: 0.5rem;
+}
+
 .mockup-browser .mockup-browser-toolbar .input.input--flat {
   padding-left: 0.5rem;
   display: flex;
-  /* background-color: #2a323a; */
   @apply bg-base-100
 }
 
-.disabled-text
-{
+.disabled-text {
   color: var(--fallback-bc, oklch(var(--bc) / .4));
+}
+
+.btn.btn-circle.btn-outline.btn--medium {
+  min-height: var(--btn-medium-size);
+  height: var(--btn-medium-size);
+  width: var(--btn-medium-size);
+}
+
+.btn.btn-ghost.btn--up-adjuster {
+  padding-right: var(--btn-adjuster-padding);
+}
+
+.btn.btn-ghost.btn--down-adjuster {
+  padding-left: var(--btn-adjuster-padding);
 }

@@ -12,7 +12,7 @@ function PixelAdjuster (
     <div className="flex flex-row">
       <button
         data-action="up"
-        className="btn btn-ghost"
+        className="btn btn-ghost btn--up-adjuster"
         name={pixelAdjusterSettings.name}
         onClick={handleOnPixelAdjusterChange}
         aria-label={`Increase ${pixelAdjusterSettings.name} top value`}
@@ -35,7 +35,7 @@ function PixelAdjuster (
       </label>
       <button
         data-action="down"
-        className="btn btn-ghost"
+        className="btn btn-ghost btn--down-adjuster"
         name={pixelAdjusterSettings.name}
         onClick={handleOnPixelAdjusterChange}
         aria-label={`Decrease ${pixelAdjusterSettings.name} top value`}
