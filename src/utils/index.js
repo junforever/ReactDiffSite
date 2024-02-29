@@ -62,7 +62,7 @@ function checkValidUrl (url) {
 *- agregar la opcion para mover verticalmente los iframes
 *- agregar el boton de reset to default
 *- agregar el boton de back to top
-- notificacion de error si la página tiene restricciones de cargar en iframe
+*- notificacion de error si la página tiene restricciones de cargar en iframe
 - eliminar el bloqueo de localhost
 - eliminar el bloque de interactuar con la página
 - agregar los otros breakpoints y el scroll horizontal

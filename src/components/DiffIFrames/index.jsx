@@ -9,22 +9,18 @@ function DiffIFrames ({
   debounceInputs,
   handleITopChange
 }) {
-  const [urlValidated, setUrlValidated] = useState({
-    leftUrl: '',
-    rightUrl: ''
-  })
   const [swiperPos, setSwiperPos] = useState(() => {
     return debounceInputs.iWidth === 0 ? window.innerWidth / 2 : debounceInputs.iWidth / 2
   })
 
-  const [iFramesLoaded, setIframesLoaded] = useState({ leftIFrame: true, rightIFrame: true })
-  const [firstLoad, setFirstLoad] = useState(true)
+  const [leftUrlValidated, setLeftUrlValidated] = useState(isValidUrl(debounceInputs.leftUrl))
+  const [rightUrlValidated, setRightUrlValidated] = useState(isValidUrl(debounceInputs.rightUrl))
+  const [leftIFrameLoaded, setLeftIFrameLoaded] = useState(false)
+  const [rightIFrameLoaded, setRightIFrameLoaded] = useState(false)
+  const [leftIFrameAllowed, setLeftIFrameAllowed] = useState(true)
+  const [rightIFrameAllowed, setRightIFrameAllowed] = useState(true)
 
-  const leftUrlValidated = isValidUrl(debounceInputs.leftUrl)
-  const rightUrlValidated = isValidUrl(debounceInputs.rightUrl)
   const iFramesContainer = useRef(null)
-  const urlLeft = useRef(leftUrlValidated)
-  const urlRight = useRef(rightUrlValidated)
   let eventStart = false
 
   useEffect(() => {
@@ -35,53 +31,30 @@ function DiffIFrames ({
 
     if (!isNumber(debounceInputs.rightIFrameTopDebounce)) {
       handleITopChange('rightIFrameTop')
-      return
     }
-
-    setSwiperPos(parseInt(debounceInputs.iWidth) === 0 ? iFramesContainer.current.getBoundingClientRect().width / 2 : parseInt(debounceInputs.iWidth) / 2)
-
-    if (!firstLoad) {
-      if (urlLeft.current !== leftUrlValidated && urlRight.current !== rightUrlValidated) {
-        urlLeft.current = leftUrlValidated
-        urlRight.current = rightUrlValidated
-        setIframesLoaded({
-          leftIFrame: leftUrlValidated === '',
-          rightIFrame: rightUrlValidated === ''
-        })
-      } else if (urlLeft.current !== leftUrlValidated) {
-        urlLeft.current = leftUrlValidated
-        setIframesLoaded({
-          ...iFramesLoaded,
-          leftIFrame: leftUrlValidated === ''
-        })
-      } else if (urlRight.current !== rightUrlValidated) {
-        urlRight.current = rightUrlValidated
-        setIframesLoaded({
-          ...iFramesLoaded,
-          rightIFrame: rightUrlValidated === ''
-        })
-      }
-    } else {
-      setFirstLoad(false)
-      setIframesLoaded({
-        leftIFrame: leftUrlValidated === '',
-        rightIFrame: rightUrlValidated === ''
-      })
-    }
-
-    setUrlValidated({
-      rightUrl: rightUrlValidated,
-      leftUrl: leftUrlValidated
-    })
   }, [
-    debounceInputs.iHeightDebounce,
-    debounceInputs.iWidth,
-    debounceInputs.sideBySide,
-    debounceInputs.leftUrl,
-    debounceInputs.rightUrl,
     debounceInputs.leftIFrameTopDebounce,
     debounceInputs.rightIFrameTopDebounce
   ])
+
+  useEffect(() => {
+    setSwiperPos(parseInt(debounceInputs.iWidth) === 0 ? iFramesContainer.current.getBoundingClientRect().width / 2 : parseInt(debounceInputs.iWidth) / 2)
+  }, [
+    debounceInputs.iWidth,
+    debounceInputs.sideBySide
+  ])
+
+  useEffect(() => {
+    setLeftIFrameLoaded(debounceInputs.leftUrl === '' || !isValidUrl(debounceInputs.leftUrl))
+    setLeftUrlValidated(isValidUrl(debounceInputs.leftUrl))
+    setLeftIFrameAllowed(true)
+  }, [debounceInputs.leftUrl])
+
+  useEffect(() => {
+    setRightIFrameLoaded(debounceInputs.rightUrl === '' || !isValidUrl(debounceInputs.rightUrl))
+    setRightUrlValidated(isValidUrl(debounceInputs.rightUrl))
+    setRightIFrameAllowed(true)
+  }, [debounceInputs.rightUrl])
 
   const swipeHandleDown = (e) => {
     e.preventDefault()
@@ -147,9 +120,9 @@ function DiffIFrames ({
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
             }}
           >
-            <div className={`input input--flat justify-start items-center gap-x-2 ${debounceInputs.leftUrl && !leftUrlValidated ? 'input-error' : ''}`}>
-              { !iFramesLoaded.leftIFrame && <span className="loading loading-spinner loading-sm -ml-1"></span> }
-              { iFramesLoaded.leftIFrame &&
+            <div className={`input input--flat justify-start items-center gap-x-2 ${debounceInputs.leftUrl && !leftUrlValidated ? 'input-error' : ''} ${leftUrlValidated && !leftIFrameAllowed ? 'input-warning' : ''}`}>
+              { !leftIFrameLoaded && <span className="loading loading-spinner loading-sm -ml-1"></span> }
+              { leftIFrameLoaded &&
                 <span>
                   <IconContext.Provider value={{
                     className: 'text-sm'
@@ -159,15 +132,18 @@ function DiffIFrames ({
                 </span>
               }
               <span>
-                { urlValidated.leftUrl }
+                { leftUrlValidated }
               </span>
             </div>
           </div>
           <iframe
             scrolling="no"
-            src={ urlValidated.leftUrl }
+            src={ leftUrlValidated }
             name="leftIFrame"
-            onLoad={() => setIframesLoaded({ ...iFramesLoaded, leftIFrame: true })}
+            onLoad={(e) => {
+              setLeftIFrameLoaded(true)
+              setLeftIFrameAllowed(leftUrlValidated && e.target.contentWindow.length > 0)
+            }}
             className="h-full pointer-events-none overflow-hidden relative"
             style={{
               top: `${debounceInputs.leftIFrameTopDebounce}px`,
@@ -190,9 +166,9 @@ function DiffIFrames ({
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
             }}
           >
-            <div className={`input input--flat justify-start items-center gap-x-2 ${debounceInputs.rightUrl && !rightUrlValidated ? 'input-error' : ''}`}>
-              { !iFramesLoaded.rightIFrame && <span className="loading loading-spinner loading-sm -ml-1"></span> }
-              { iFramesLoaded.rightIFrame &&
+            <div className={`input input--flat justify-start items-center gap-x-2 ${debounceInputs.rightUrl && !rightUrlValidated ? 'input-error' : ''} ${rightUrlValidated && !rightIFrameAllowed ? 'input-warning' : ''}`}>
+              { !rightIFrameLoaded && <span className="loading loading-spinner loading-sm -ml-1"></span> }
+              { rightIFrameLoaded &&
                 <span>
                   <IconContext.Provider value={{
                     className: 'text-sm'
@@ -202,15 +178,18 @@ function DiffIFrames ({
                 </span>
               }
               <span>
-                { urlValidated.rightUrl }
+                { rightUrlValidated }
               </span>
             </div>
           </div>
           <iframe
             scrolling="no"
-            src={ urlValidated.rightUrl }
+            src={ rightUrlValidated }
             name="rightIFrame"
-            onLoad={() => setIframesLoaded({ ...iFramesLoaded, rightIFrame: true })}
+            onLoad={(e) => {
+              setRightIFrameLoaded(true)
+              setRightIFrameAllowed(rightUrlValidated && e.target.contentWindow.length > 0)
+            }}
             className="h-full pointer-events-none overflow-hidden relative"
             style={{
               top: `${debounceInputs.rightIFrameTopDebounce}px`,
