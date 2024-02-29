@@ -52,14 +52,14 @@ export function handleWidthResize (sideBySide, iWidth) {
   const { innerWidth } = window
 
   if (sideBySide) {
-    console.log('func-sbs', iWidth, innerWidth)
+    // console.log('func-sbs', iWidth, innerWidth)
     if (((iWidth * 2) + 24) > innerWidth) {
       return { iFrameContainerWidth: `${((iWidth * 2) + 24)}px`, iFrameContainerPaddingRight: '1rem', iFrameJustifyContent: 'flex-start' }
     }
     return defaultSettings
   }
 
-  console.log('func-no-sbs', iWidth, innerWidth)
+  // console.log('func-no-sbs', iWidth, innerWidth)
   if (iWidth > innerWidth) {
     return { iFrameContainerWidth: `${iWidth}px`, iFrameContainerPaddingRight: '1rem', iFrameJustifyContent: 'flex-start' }
   }

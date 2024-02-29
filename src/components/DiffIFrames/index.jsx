@@ -22,7 +22,7 @@ function DiffIFrames ({
   const [rightIFrameAllowed, setRightIFrameAllowed] = useState(true)
 
   const iFramesContainer = useRef(null)
-  let eventStart = false
+  const eventStart = useRef(false)
 
   useEffect(() => {
     if (!isNumber(debounceInputs.leftIFrameTopDebounce)) {
@@ -60,13 +60,15 @@ function DiffIFrames ({
 
   const swipeHandleDown = (e) => {
     e.preventDefault()
-    eventStart = true
+    eventStart.current = true
+    console.log('mouse on')
     window.addEventListener('mousemove', swipeHandleMove)
     window.addEventListener('mouseup', swipeHandleUp)
   }
 
   const swipeHandleMove = (e) => {
-    if (!eventStart) return false
+    // console.log(e.clientX)
+    if (!eventStart.current) return false
 
     const posFactorLeft = 6
     const posFactorRight = 25
@@ -88,11 +90,14 @@ function DiffIFrames ({
     if (total - (e.clientX - cursorFactor) < posFactorRight) {
       return false
     }
+
+    console.log('mouse move', eventStart.current)
     setSwiperPos(currentSwiperPos)
   }
 
   const swipeHandleUp = (e) => {
-    eventStart = false
+    eventStart.current = false
+    console.log('exit', eventStart.current)
     window.removeEventListener('mousemove', swipeHandleMove)
     window.removeEventListener('mouseup', swipeHandleUp)
   }
@@ -151,7 +156,7 @@ function DiffIFrames ({
               setLeftIFrameLoaded(true)
               setLeftIFrameAllowed(leftUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full overflow-hidden relative pointer-events-none"
+            className="h-full overflow-hidden relative"
             style={{
               top: `${debounceInputs.leftIFrameTopDebounce}px`,
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
@@ -197,7 +202,7 @@ function DiffIFrames ({
               setRightIFrameLoaded(true)
               setRightIFrameAllowed(rightUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full overflow-hidden relative pointer-events-none"
+            className="h-full overflow-hidden relative"
             style={{
               top: `${debounceInputs.rightIFrameTopDebounce}px`,
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
@@ -207,8 +212,9 @@ function DiffIFrames ({
 
         {/* swiper handle */}
         <div
-          className={`absolute z-10 w-8 opacity-70 cursor-ew-resize ${debounceInputs.sideBySide || debounceInputs.overlayMode !== 'swipe' ? 'hidden' : ''}`}
+          className={`swiper-divider absolute z-10 w-8 opacity-70 cursor-ew-resize ${debounceInputs.sideBySide || debounceInputs.overlayMode !== 'swipe' ? 'hidden' : ''}`}
           onMouseDown={swipeHandleDown}
+          onMouseLeave={(e) => { console.log('leave'); swipeHandleUp(e) }}
           style={{
             left: `${swiperPos}px`,
             height: `${debounceInputs.iHeightDebounce}px`

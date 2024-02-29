@@ -39,10 +39,10 @@ function App () {
   const resizeObserver = new ResizeObserver((entries) => {
     const { width } = entries[0].contentRect
     if (width <= LARGE_BREAKPOINT) {
-      console.log('large')
+      // console.log('large')
       setIsLgView(false)
     } else {
-      console.log('no large')
+      // console.log('no large')
       setIsLgView(true)
     }
     // setIFramesWidth(handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth)))
@@ -111,7 +111,7 @@ function App () {
   )
 
   useEffect(() => {
-    console.log('yes')
+    // console.log('yes')
     handleIWidthChange()
   }, [diffSettings.iWidth, diffSettings.sideBySide])
 
@@ -173,7 +173,7 @@ function App () {
 
   const handleIWidthChange = () => {
     const conf = handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth))
-    console.log(conf, diffSettings.sideBySide, diffSettings.iWidth)
+    // console.log(conf, diffSettings.sideBySide, diffSettings.iWidth)
     setDiffSettings({
       ...diffSettings,
       iFrameContainerWidth: conf.iFrameContainerWidth,
