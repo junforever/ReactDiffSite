@@ -151,7 +151,7 @@ function DiffIFrames ({
               setLeftIFrameLoaded(true)
               setLeftIFrameAllowed(leftUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full overflow-hidden relative"
+            className="h-full overflow-hidden relative pointer-events-none"
             style={{
               top: `${debounceInputs.leftIFrameTopDebounce}px`,
               width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? (parseInt(debounceInputs.iWidth) === 0 ? 'calc(100vw - 50px)' : `${debounceInputs.iWidth}px`) : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
@@ -197,7 +197,7 @@ function DiffIFrames ({
               setRightIFrameLoaded(true)
               setRightIFrameAllowed(rightUrlValidated && e.target.contentWindow.length > 0)
             }}
-            className="h-full overflow-hidden relative"
+            className="h-full overflow-hidden relative pointer-events-none"
             style={{
               top: `${debounceInputs.rightIFrameTopDebounce}px`,
               width: parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`
