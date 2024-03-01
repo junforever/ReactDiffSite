@@ -6,7 +6,7 @@ export const MOBILE_TOP_DISTANCE = 350
 export const OTHER_TOP_DISTANCE = 220
 export const BTT_TOP_DISTANCE = 300
 // according to the intersection observer
-// export const LARGE_BREAKPOINT = 1007
+export const LARGE_BREAKPOINT = 1007
 // according to the intersection observer
 export const MOBILE_BREAKPOINT = 624
 export const DEFAULT_DIFF_INPUT = {
@@ -107,6 +107,6 @@ function checkValidUrl (url) {
 *- eliminar el bloqueo de localhost
 *- eliminar el bloque de interactuar con la página
 *- agregar los otros breakpoints y el scroll horizontal
+*- cuando se hace resize y se oculta el tipo de comparacion setearle a overlay
 - actualizar la ayuda y los docs
-- cuando se hace resize y se oculta el tipo de comparacion setearle a overlay
 */

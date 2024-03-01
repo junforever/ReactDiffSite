@@ -5,7 +5,7 @@ import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
 import ShowHideButton from './components/ShowHideButton'
 
 function App () {
@@ -18,6 +18,10 @@ function App () {
   useEffect(() => {
     window.addEventListener('scroll', scrollEventListener)
     const resizeObserver = new ResizeObserver((entries) => {
+      const { width } = entries[0].contentRect
+      if (width <= LARGE_BREAKPOINT) {
+        currentDiffSettings.current = { ...currentDiffSettings.current, sideBySide: false }
+      }
       handleIWidthChange()
     })
     resizeObserver.observe(document.documentElement)
