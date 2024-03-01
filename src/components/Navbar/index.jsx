@@ -22,14 +22,14 @@ function Navbar () {
         <Modal
           btnText="How to use this tool?"
           title="How to use the Site Diff Tool"
-          content={`This is a simple websites comparison tool built with React.<br>
-          It allows to compare two sites side by side or with an overlay effect.<br>
-          Enter a valid URL in both input fields to start the comparison, in case a URL is invalid, the border of the navigation bar on the corresponding browser mock will turn red <br>
+          content={`Enter a valid URL in both input fields to start the comparison, in case a URL is invalid, the border of the navigation bar on the corresponding browser mock will turn <b class='text-error'>red</b>,
+          and in case that a URL can't be embedded (or can but the page may not work/show correctly), the border of the navigation bar on the corresponding browser mock will turn <b class='text-warning'>orange</b>. <br>
           The height of the iframes is customizable between a range of ${MIN_IHEIGHT}px - ${MAX_IHEIGHT}px, the default value is ${DEFAULT_IHEIGHT}px.<br>
           For the overlay <u>blend</u> and <u>onion</u> modes, the opacity can be adjusted.<br>
-          Inside the viewport width option, the classy and treasury mobile breakpoints are available as well as other common mobile devices, for a responsive view, use the <u>full width</u> option.<br>
+          In <u>blend mode</u>, if both pages match, you will see a black screen (with the opacity at 100%), if they don't, you will see the differences in other colors.<br>
+          Classy and Treasury breakpoints are available as well as other common mobile devices, for a responsive view, use the <u>full width</u> option.<br>
           There are two themes available, the dark and light themes, the default theme is dark.<br>
-          The tool is responsive and works on all devices.<br>
+          A functionality to move the iframes' content vertically was included, if a vertical adjustment is needed to make the iframes match between them.<br>
           <b><u>Important Note</u></b>: Not all websites can be iframed because of their own configuration, if you encounter any issues, please try another website.`}
         />
       </div>

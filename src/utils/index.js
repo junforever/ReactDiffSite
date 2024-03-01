@@ -2,13 +2,10 @@ export const DEFAULT_IHEIGHT = 8200
 export const MIN_IHEIGHT = 1500
 export const MAX_IHEIGHT = 25000
 export const IHEIGHT_STEP = 250
-export const MOBILE_TOP_DISTANCE = 350
-export const OTHER_TOP_DISTANCE = 220
 export const BTT_TOP_DISTANCE = 300
 // according to the intersection observer
 export const LARGE_BREAKPOINT = 1007
 // according to the intersection observer
-export const MOBILE_BREAKPOINT = 624
 export const DEFAULT_DIFF_INPUT = {
   leftUrl: '',
   rightUrl: ''
@@ -30,6 +27,11 @@ export const DEFAULT_DIFF_SETTINGS = {
   leftIFrameTop: '0',
   rightIFrameTop: '0',
   ...DEFAULT_IFRAME_SETTINGS
+}
+
+export const DEFAULT_STICKY_SETTINGS_CONF = {
+  position: '',
+  visibility: true
 }
 
 export function isValidUrl (url) {
@@ -96,17 +98,3 @@ function checkValidUrl (url) {
 
   return urlPattern.test(url)
 }
-
-// TODO:
-/*
-*- poner un range para el iheight
-*- agregar la opcion para mover verticalmente los iframes
-*- agregar el boton de reset to default
-*- agregar el boton de back to top
-*- notificacion de error si la página tiene restricciones de cargar en iframe
-*- eliminar el bloqueo de localhost
-*- eliminar el bloque de interactuar con la página
-*- agregar los otros breakpoints y el scroll horizontal
-*- cuando se hace resize y se oculta el tipo de comparacion setearle a overlay
-- actualizar la ayuda y los docs
-*/

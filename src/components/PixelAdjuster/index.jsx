@@ -24,7 +24,7 @@ function PixelAdjuster (
       <label className="input flex items-center gap-2">
         <input type="text "
           data-action="change"
-          maxLength="5"
+          maxLength="4"
           className="grow w-14"
           name={pixelAdjusterSettings.name}
           onChange={ handleOnPixelAdjusterChange }

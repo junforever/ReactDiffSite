@@ -14,7 +14,7 @@ _For visual updates, screenshots are helpful_
 - [ ] I have read the [Contributing Guidelines](https://fantasia.rvdocs.io/docs/development/contributing.html)
 - [ ] I have performed a self-review of my own code
 - [ ] A teammate has performed a review prior to asking BSE team
-- [ ] Supporting tests included
+- [ ] Supporting tests included (if necessary)
 - [ ] Documentation updated as appropriate
 
 ## What Does the BST Team Look For

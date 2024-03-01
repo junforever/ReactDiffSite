@@ -8,7 +8,7 @@ import PixelAdjuster from '../PixelAdjuster'
 
 function DiffSettings ({
   diffSettings,
-  settingsAreVisible,
+  stickySettingsConf,
   handleDiffSettingsChange,
   handleOnPixelAdjusterChange,
   handleResetSettings
@@ -19,7 +19,7 @@ function DiffSettings ({
   }
 
   return (
-    <section className={`flex flex-col sticky top-0 z-20 bg-base-300 rounded-box p-4 pb-6 gap-y-2 ${!settingsAreVisible ? 'invisible' : ''}`}>
+    <section className={`flex flex-col top-0 z-20 bg-base-300 rounded-box p-4 pb-6 gap-y-2 ${stickySettingsConf.position} ${!stickySettingsConf.visibility ? 'invisible' : ''}`}>
       {/* first row settings */}
       <div className="flex flex-col items-center gap-y-4 sm:flex-row justify-center sm:items-start gap-x-8 flex-wrap">
         {/* iframe height */}
@@ -207,7 +207,7 @@ function DiffSettings ({
 
 DiffSettings.propTypes = {
   diffSettings: PropTypes.object.isRequired,
-  settingsAreVisible: PropTypes.bool.isRequired,
+  stickySettingsConf: PropTypes.object.isRequired,
   handleDiffSettingsChange: PropTypes.func.isRequired,
   handleOnPixelAdjusterChange: PropTypes.func.isRequired,
   handleResetSettings: PropTypes.func.isRequired

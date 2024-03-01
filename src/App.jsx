@@ -5,15 +5,10 @@ import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, DEFAULT_STICKY_SETTINGS_CONF, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
 import ShowHideButton from './components/ShowHideButton'
 
 function App () {
-  /* visualization states */
-  const [bttIsVisible, setBttIsVisible] = useState(false)
-  const [shbIsVisible, setShbIsVisible] = useState(false)
-  const [settingsAreVisible, setSettingsAreVisible] = useState(true)
-
   // activate the resizeObserver only the first time
   useEffect(() => {
     window.addEventListener('scroll', scrollEventListener)
@@ -32,12 +27,16 @@ function App () {
     }
   }, [])
 
-  const handleShowHideClick = () => { setSettingsAreVisible((prevValue) => !prevValue) }
+  /* visualization states */
+  const [bttIsVisible, setBttIsVisible] = useState(false)
+  const [shbIsVisible, setShbIsVisible] = useState(false)
+  const [stickySettingsConf, setStickySettingsConf] = useState(DEFAULT_STICKY_SETTINGS_CONF)
+  const firstTime = useRef(true)
+
+  const handleShowHideClick = () => { setStickySettingsConf((prevValue) => ({ ...prevValue, visibility: !prevValue.visibility })) }
 
   const scrollEventListener = () => {
-    const { width } = document.documentElement.getBoundingClientRect()
     const iframesSection = document.querySelector('.diff-iframes-section')
-    const iframesTopDistance = width <= MOBILE_BREAKPOINT ? MOBILE_TOP_DISTANCE : OTHER_TOP_DISTANCE
 
     if (window.scrollY > BTT_TOP_DISTANCE) {
       setBttIsVisible(true)
@@ -45,11 +44,19 @@ function App () {
       setBttIsVisible(false)
     }
 
-    if (window.scrollY > 0 && iframesSection.getBoundingClientRect().top <= iframesTopDistance) {
-      setShbIsVisible(true)
+    if (window.scrollY > 0 && iframesSection.getBoundingClientRect().top <= 10) {
+      if (firstTime.current) {
+        firstTime.current = false
+        setShbIsVisible(true)
+        setStickySettingsConf({
+          position: 'sticky',
+          visibility: false
+        })
+      }
     } else {
+      firstTime.current = true
       setShbIsVisible(false)
-      setSettingsAreVisible(true)
+      setStickySettingsConf(DEFAULT_STICKY_SETTINGS_CONF)
     }
   }
 
@@ -124,17 +131,6 @@ function App () {
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
 
-  // const handleBreakPointChange = () => {
-  //   if (diffSettings.sideBySide) {
-  //     const diffSettingsChanged = {
-  //       ...diffSettings,
-  //       sideBySide: false
-  //     }
-  //     setDiffSettings((prevValue) => ({ ...prevValue, sideBySide: false }))
-  //     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
-  //   }
-  // }
-
   const handleITopChange = (iframe) => {
     const iTopChanged = {
       ...diffSettings,
@@ -183,7 +179,7 @@ function App () {
       />
       <DiffSettings
         diffSettings={diffSettings}
-        settingsAreVisible={settingsAreVisible}
+        stickySettingsConf={stickySettingsConf}
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
         handleResetSettings= { handleResetSettings }
@@ -202,7 +198,7 @@ function App () {
         handleSwiperPosChange= {handleSwiperPosChange}
       />
       <BackToTop isVisible={bttIsVisible} />
-      <ShowHideButton isVisible={shbIsVisible} isComponentVisible={settingsAreVisible} handleShowHideClick={handleShowHideClick}/>
+      <ShowHideButton isVisible={shbIsVisible} componentVisibility={stickySettingsConf.visibility} handleShowHideClick={handleShowHideClick}/>
     </div>
   )
 }
