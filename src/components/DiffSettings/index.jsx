@@ -9,7 +9,6 @@ import PixelAdjuster from '../PixelAdjuster'
 function DiffSettings ({
   diffSettings,
   settingsAreVisible,
-  isLgView,
   handleDiffSettingsChange,
   handleOnPixelAdjusterChange,
   handleResetSettings
@@ -56,15 +55,15 @@ function DiffSettings ({
             <option value="0" data-breakpoint="full-width">Full Width</option>
             <optgroup label="Classy Breakpoints">
               <option value="599" data-breakpoint="classy-mb">Classy Mobile</option>
-              {/* <option value="999" data-breakpoint="classy-sm">Classy Small</option> */}
-              {/* <option value="1438" data-breakpoint="classy-md">Classy Medium</option> */}
+              <option value="999" data-breakpoint="classy-sm">Classy Small</option>
+              <option value="1438" data-breakpoint="classy-md">Classy Medium</option>
               {/* <option value="1500" data-breakpoint="classy-lg">Classy Large</option> */}
             </optgroup>
 
             <optgroup label="Classy Breakpoints">
               <option value="639" data-breakpoint="treasury-mb">Treasury Mobile</option>
-              {/* <option value="879" data-breakpoint="treasury-sm">Treasury Small</option> */}
-              {/* <option value="1119" data-breakpoint="treasury-md">Treasury Medium</option> */}
+              <option value="879" data-breakpoint="treasury-sm">Treasury Small</option>
+              <option value="1119" data-breakpoint="treasury-md">Treasury Medium</option>
               {/* <option value="1439" data-breakpoint="treasury-lg">Treasury Large</option> */}
             </optgroup>
 
@@ -79,9 +78,9 @@ function DiffSettings ({
         </label>
 
         {/* compare mode */}
-        <div className="hidden sm:flex flex-col">
+        <div className="hidden lg:flex flex-col">
           <div className="label self-center">
-            <span className={`label-text text-base ${!isLgView ? 'disabled-text' : ''}`}>Comparison mode</span>
+            <span className="label-text text-base">Comparison mode</span>
           </div>
           <label className="swap swap-flip">
             {/* this hidden checkbox controls the state */}
@@ -90,22 +89,21 @@ function DiffSettings ({
               name="sideBySide"
               checked={diffSettings.sideBySide}
               onChange={handleDiffSettingsChange}
-              disabled={!isLgView}
             />
             <div className="swap-on">
               <div className="flex flex-col items-center">
-                <IconContext.Provider value={{ className: `text-4xl ${isLgView ? 'text-primary' : 'text-slategrey'}` }}>
+                <IconContext.Provider value={{ className: 'text-4xl text-primary' }}>
                   <BsLayoutSplit aria-hidden />
                 </IconContext.Provider>
-                <span className={`label-text text-base ${!isLgView ? 'disabled-text' : ''}`}>Side By Side</span>
+                <span className="label-text text-base" >Side By Side</span>
               </div>
             </div>
             <div className="swap-off">
               <div className="flex flex-col items-center">
-                <IconContext.Provider value={{ className: `text-4xl ${isLgView ? 'text-primary' : 'text-slategrey'}` }}>
+                <IconContext.Provider value={{ className: 'text-4xl text-primary' }}>
                   <MdContentCopy aria-hidden />
                 </IconContext.Provider>
-                <span className={`label-text text-base ${!isLgView ? 'disabled-text' : ''}`}>Overlay</span>
+                <span className="label-text text-base">Overlay</span>
               </div>
             </div>
           </label>
@@ -117,17 +115,19 @@ function DiffSettings ({
             <span className={`label-text text-base ${diffSettings.sideBySide ? 'disabled-text' : ''}`}>Overlay mode</span>
           </div>
           <div className="join">
-            <input
-              style={ diffSettings.overlayMode === 'swipe' && diffSettings.sideBySide ? btnStyles : {} }
-              className="join-item btn custom-radio"
-              type="radio"
-              name="overlayMode"
-              aria-label="Swipe"
-              value="swipe"
-              checked={ diffSettings.overlayMode === 'swipe'}
-              onChange={ handleDiffSettingsChange }
-              disabled={ diffSettings.sideBySide }
-            />
+            <div className="tooltip tooltip-bottom" data-tip="Move the swipe line smoothly">
+              <input
+                style={ diffSettings.overlayMode === 'swipe' && diffSettings.sideBySide ? btnStyles : {} }
+                className="join-item btn custom-radio"
+                type="radio"
+                name="overlayMode"
+                aria-label="Swipe"
+                value="swipe"
+                checked={ diffSettings.overlayMode === 'swipe'}
+                onChange={ handleDiffSettingsChange }
+                disabled={ diffSettings.sideBySide }
+              />
+            </div>
             <input
               style={ diffSettings.overlayMode === 'blend' && diffSettings.sideBySide ? btnStyles : {} }
               className="join-item btn custom-radio"
@@ -208,7 +208,6 @@ function DiffSettings ({
 DiffSettings.propTypes = {
   diffSettings: PropTypes.object.isRequired,
   settingsAreVisible: PropTypes.bool.isRequired,
-  isLgView: PropTypes.bool.isRequired,
   handleDiffSettingsChange: PropTypes.func.isRequired,
   handleOnPixelAdjusterChange: PropTypes.func.isRequired,
   handleResetSettings: PropTypes.func.isRequired

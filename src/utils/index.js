@@ -2,28 +2,34 @@ export const DEFAULT_IHEIGHT = 8200
 export const MIN_IHEIGHT = 1500
 export const MAX_IHEIGHT = 25000
 export const IHEIGHT_STEP = 250
-export const MOBILE_TOP_DISTANCE = 150
-export const OTHER_TOP_DISTANCE = 80
+export const MOBILE_TOP_DISTANCE = 350
+export const OTHER_TOP_DISTANCE = 220
 export const BTT_TOP_DISTANCE = 300
 // according to the intersection observer
-export const LARGE_BREAKPOINT = 1007
+// export const LARGE_BREAKPOINT = 1007
 // according to the intersection observer
 export const MOBILE_BREAKPOINT = 624
 export const DEFAULT_DIFF_INPUT = {
   leftUrl: '',
   rightUrl: ''
 }
+
+export const DEFAULT_IFRAME_SETTINGS = {
+  iFrameContainerWidth: '100%',
+  iFrameContainerPaddingRight: '0',
+  iFrameJustifyContent: 'center',
+  swiperPos: window.innerWidth / 2
+}
+
 export const DEFAULT_DIFF_SETTINGS = {
   iHeight: DEFAULT_IHEIGHT,
   iWidth: 0,
-  sideBySide: true,
+  sideBySide: false,
   overlayMode: 'swipe',
   opacity: 1,
   leftIFrameTop: '0',
   rightIFrameTop: '0',
-  iFrameContainerWidth: '100%',
-  iFrameContainerPaddingRight: '0',
-  iFrameJustifyContent: 'center'
+  ...DEFAULT_IFRAME_SETTINGS
 }
 
 export function isValidUrl (url) {
@@ -40,31 +46,39 @@ export function isNumber (value) {
   return /^[-]?[0-9]+$/.test(value)
 }
 
-export function handleWidthResize (sideBySide, iWidth) {
-  const defaultSettings = {
-    iFrameContainerWidth: '100%',
-    iFrameContainerPaddingRight: '0',
-    iFrameJustifyContent: 'center'
+export function handleWidthResize (props) {
+  const initSwiperPos = {
+    ...DEFAULT_IFRAME_SETTINGS,
+    swiperPos: parseInt(props.iWidth) === 0 ? window.innerWidth / 2 : props.iWidth / 2
   }
 
-  if (iWidth === 0) return defaultSettings
+  if (parseInt(props.iWidth) === 0) return initSwiperPos
 
   const { innerWidth } = window
 
-  if (sideBySide) {
-    // console.log('func-sbs', iWidth, innerWidth)
-    if (((iWidth * 2) + 24) > innerWidth) {
-      return { iFrameContainerWidth: `${((iWidth * 2) + 24)}px`, iFrameContainerPaddingRight: '1rem', iFrameJustifyContent: 'flex-start' }
+  if (props.sideBySide) {
+    if (((parseInt(props.iWidth) * 2) + 24) > innerWidth) {
+      return {
+        ...initSwiperPos,
+        iFrameContainerWidth: `${((parseInt(props.iWidth) * 2) + 24)}px`,
+        iFrameContainerPaddingRight: '1rem',
+        iFrameJustifyContent: 'flex-start'
+
+      }
     }
-    return defaultSettings
+    return initSwiperPos
   }
 
-  // console.log('func-no-sbs', iWidth, innerWidth)
-  if (iWidth > innerWidth) {
-    return { iFrameContainerWidth: `${iWidth}px`, iFrameContainerPaddingRight: '1rem', iFrameJustifyContent: 'flex-start' }
+  if ((parseInt(props.iWidth) + 32) > innerWidth) {
+    return {
+      ...initSwiperPos,
+      iFrameContainerWidth: `${parseInt(props.iWidth)}px`,
+      iFrameContainerPaddingRight: '1rem',
+      iFrameJustifyContent: 'flex-start'
+    }
   }
 
-  return defaultSettings
+  return initSwiperPos
 }
 
 function enhanceUrl (url) {
@@ -92,6 +106,7 @@ function checkValidUrl (url) {
 *- notificacion de error si la página tiene restricciones de cargar en iframe
 *- eliminar el bloqueo de localhost
 *- eliminar el bloque de interactuar con la página
-- agregar los otros breakpoints y el scroll horizontal
+*- agregar los otros breakpoints y el scroll horizontal
 - actualizar la ayuda y los docs
+- cuando se hace resize y se oculta el tipo de comparacion setearle a overlay
 */

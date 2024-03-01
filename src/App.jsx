@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DiffInput from './components/DiffInput'
 import DiffSettings from './components/DiffSettings'
 import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, MOBILE_BREAKPOINT, OTHER_TOP_DISTANCE, MOBILE_TOP_DISTANCE, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
 import ShowHideButton from './components/ShowHideButton'
 
 function App () {
@@ -13,57 +13,20 @@ function App () {
   const [bttIsVisible, setBttIsVisible] = useState(false)
   const [shbIsVisible, setShbIsVisible] = useState(false)
   const [settingsAreVisible, setSettingsAreVisible] = useState(true)
-  const [isLgView, setIsLgView] = useState(
-    () => {
-      const { width } = document.documentElement.getBoundingClientRect()
-      if (width <= LARGE_BREAKPOINT) return false
-      return true
-    }
-  )
-  // const [iFramesWidth, setIFramesWidth] = useState(
-  //   () => {
-  //     const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
-  //     let iWidth = DEFAULT_DIFF_SETTINGS.iWidth
-  //     let sideBySide = DEFAULT_DIFF_SETTINGS.sideBySide
-  //     if (diffSettingsLS !== null) {
-  //       const settings = JSON.parse(diffSettingsLS)
-  //       iWidth = settings.iWidth
-  //       sideBySide = settings.sideBySide
-  //     }
-
-  //     return handleWidthResize(sideBySide, iWidth)
-  //   }
-  // )
-
-  // This functionality is for disable the side by side comparison mode for tablets and mobile
-  const resizeObserver = new ResizeObserver((entries) => {
-    const { width } = entries[0].contentRect
-    if (width <= LARGE_BREAKPOINT) {
-      // console.log('large')
-      setIsLgView(false)
-    } else {
-      // console.log('no large')
-      setIsLgView(true)
-    }
-    // setIFramesWidth(handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth)))
-  })
 
   // activate the resizeObserver only the first time
   useEffect(() => {
+    window.addEventListener('scroll', scrollEventListener)
+    const resizeObserver = new ResizeObserver((entries) => {
+      handleIWidthChange()
+    })
     resizeObserver.observe(document.documentElement)
 
     return () => {
       resizeObserver.unobserve(document.documentElement)
+      window.removeEventListener('scroll', scrollEventListener)
     }
   }, [])
-
-  // watch if the window is resized to disable the side by side comparison mode for tablets and mobile
-  useEffect(() => {
-    const { width } = document.documentElement.getBoundingClientRect()
-    if (!isLgView && width <= LARGE_BREAKPOINT && diffSettings.sideBySide) {
-      handleBreakPointChange()
-    }
-  }, [isLgView])
 
   const handleShowHideClick = () => { setSettingsAreVisible((prevValue) => !prevValue) }
 
@@ -86,14 +49,29 @@ function App () {
     }
   }
 
-  useEffect(() => {
-    window.addEventListener('scroll', scrollEventListener)
-    return () => {
-      window.removeEventListener('scroll', scrollEventListener)
-    }
-  }, [])
-
   /* settings states */
+  const handleIWidthChange = () => {
+    const conf = handleWidthResize(currentDiffSettings.current)
+    const diffSettingsChanged = {
+      ...currentDiffSettings.current,
+      ...conf
+    }
+    currentDiffSettings.current = diffSettingsChanged
+    setDiffSettings(diffSettingsChanged)
+  }
+
+  const loadDiffSettings = (() => {
+    const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
+    let settings = null
+    if (diffSettingsLS !== null) {
+      settings = JSON.parse(diffSettingsLS)
+    }
+
+    return settings !== null
+      ? { ...settings, ...handleWidthResize(settings) }
+      : DEFAULT_DIFF_SETTINGS
+  })()
+
   const [diffInput, setDiffInput] = useState(
     () => {
       const diffInputLS = window.localStorage.getItem('diffInputLS')
@@ -101,19 +79,8 @@ function App () {
     }
   )
 
-  const [diffSettings, setDiffSettings] = useState(
-    () => {
-      const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
-      return diffSettingsLS !== null
-        ? JSON.parse(diffSettingsLS)
-        : DEFAULT_DIFF_SETTINGS
-    }
-  )
-
-  useEffect(() => {
-    // console.log('yes')
-    handleIWidthChange()
-  }, [diffSettings.iWidth, diffSettings.sideBySide])
+  const currentDiffSettings = useRef(loadDiffSettings)
+  const [diffSettings, setDiffSettings] = useState(loadDiffSettings)
 
   const handleDiffInputChange = (e) => {
     const diffInputChanged = {
@@ -125,24 +92,44 @@ function App () {
   }
 
   const handleDiffSettingsChange = (e) => {
-    const diffSettingsChanged = {
-      ...diffSettings,
+    let diffSettingsChanged = {
+      ...currentDiffSettings.current,
       [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
     }
+
+    if (e.target.name === 'sideBySide') {
+      const iConf = handleWidthResize({ ...currentDiffSettings.current, sideBySide: e.target.checked })
+      diffSettingsChanged = {
+        ...currentDiffSettings.current,
+        ...iConf,
+        [e.target.name]: e.target.checked
+      }
+    }
+
+    if (e.target.name === 'iWidth') {
+      const iConf = handleWidthResize({ ...currentDiffSettings.current, iWidth: e.target.value })
+      diffSettingsChanged = {
+        ...currentDiffSettings.current,
+        ...iConf,
+        [e.target.name]: e.target.value
+      }
+    }
+
+    currentDiffSettings.current = diffSettingsChanged
     setDiffSettings(diffSettingsChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
 
-  const handleBreakPointChange = () => {
-    if (diffSettings.sideBySide) {
-      const diffSettingsChanged = {
-        ...diffSettings,
-        sideBySide: false
-      }
-      setDiffSettings((prevValue) => ({ ...prevValue, sideBySide: false }))
-      window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
-    }
-  }
+  // const handleBreakPointChange = () => {
+  //   if (diffSettings.sideBySide) {
+  //     const diffSettingsChanged = {
+  //       ...diffSettings,
+  //       sideBySide: false
+  //     }
+  //     setDiffSettings((prevValue) => ({ ...prevValue, sideBySide: false }))
+  //     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
+  //   }
+  // }
 
   const handleITopChange = (iframe) => {
     const iTopChanged = {
@@ -150,6 +137,7 @@ function App () {
       [iframe]: '0'
     }
 
+    currentDiffSettings.current = iTopChanged
     setDiffSettings(iTopChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(iTopChanged))
   }
@@ -159,6 +147,7 @@ function App () {
       ...diffSettings,
       [e.currentTarget.name]: e.currentTarget.dataset.action === 'change' ? e.currentTarget.value : (e.currentTarget.dataset.action === 'up' ? parseInt(diffSettings[e.currentTarget.name]) - 1 : parseInt(diffSettings[e.currentTarget.name]) + 1)
     }
+    currentDiffSettings.current = diffSettingsChanged
     setDiffSettings(diffSettingsChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
@@ -167,19 +156,18 @@ function App () {
     setDiffInput(DEFAULT_DIFF_INPUT)
     window.localStorage.setItem('diffInputLS', JSON.stringify(DEFAULT_DIFF_INPUT))
 
-    setDiffSettings(isLgView ? DEFAULT_DIFF_SETTINGS : { ...DEFAULT_DIFF_SETTINGS, sideBySide: false })
+    currentDiffSettings.current = DEFAULT_DIFF_SETTINGS
+    setDiffSettings(DEFAULT_DIFF_SETTINGS)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(DEFAULT_DIFF_SETTINGS))
   }
 
-  const handleIWidthChange = () => {
-    const conf = handleWidthResize(diffSettings.sideBySide, parseInt(diffSettings.iWidth))
-    // console.log(conf, diffSettings.sideBySide, diffSettings.iWidth)
-    setDiffSettings({
+  const handleSwiperPosChange = (value) => {
+    const diffSettingsChanged = {
       ...diffSettings,
-      iFrameContainerWidth: conf.iFrameContainerWidth,
-      iFrameContainerPaddingRight: conf.iFrameContainerPaddingRight,
-      iFrameJustifyContent: conf.iFrameJustifyContent
-    })
+      swiperPos: value
+    }
+    currentDiffSettings.current = diffSettingsChanged
+    setDiffSettings(diffSettingsChanged)
   }
 
   return (
@@ -192,7 +180,6 @@ function App () {
       <DiffSettings
         diffSettings={diffSettings}
         settingsAreVisible={settingsAreVisible}
-        isLgView={isLgView}
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
         handleResetSettings= { handleResetSettings }
@@ -208,7 +195,7 @@ function App () {
           }
         }
         handleITopChange= {handleITopChange}
-        handleIWidthChange= {handleIWidthChange}
+        handleSwiperPosChange= {handleSwiperPosChange}
       />
       <BackToTop isVisible={bttIsVisible} />
       <ShowHideButton isVisible={shbIsVisible} isComponentVisible={settingsAreVisible} handleShowHideClick={handleShowHideClick}/>

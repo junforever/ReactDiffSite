@@ -8,12 +8,8 @@ import { isValidUrl, isNumber } from '../../utils'
 function DiffIFrames ({
   debounceInputs,
   handleITopChange,
-  handleIWidthChange
+  handleSwiperPosChange
 }) {
-  const [swiperPos, setSwiperPos] = useState(() => {
-    return debounceInputs.iWidth === 0 ? window.innerWidth / 2 : debounceInputs.iWidth / 2
-  })
-
   const [leftUrlValidated, setLeftUrlValidated] = useState(isValidUrl(debounceInputs.leftUrl))
   const [rightUrlValidated, setRightUrlValidated] = useState(isValidUrl(debounceInputs.rightUrl))
   const [leftIFrameLoaded, setLeftIFrameLoaded] = useState(false)
@@ -39,14 +35,6 @@ function DiffIFrames ({
   ])
 
   useEffect(() => {
-    setSwiperPos(parseInt(debounceInputs.iWidth) === 0 ? iFramesContainer.current.getBoundingClientRect().width / 2 : parseInt(debounceInputs.iWidth) / 2)
-    // handleIWidthChange(debounceInputs.iWidth, debounceInputs.sideBySide)
-  }, [
-    debounceInputs.iWidth,
-    debounceInputs.sideBySide
-  ])
-
-  useEffect(() => {
     setLeftIFrameLoaded(debounceInputs.leftUrl === '' || !isValidUrl(debounceInputs.leftUrl))
     setLeftUrlValidated(isValidUrl(debounceInputs.leftUrl))
     setLeftIFrameAllowed(true)
@@ -61,13 +49,11 @@ function DiffIFrames ({
   const swipeHandleDown = (e) => {
     e.preventDefault()
     eventStart.current = true
-    console.log('mouse on')
-    window.addEventListener('mousemove', swipeHandleMove)
-    window.addEventListener('mouseup', swipeHandleUp)
+    window.addEventListener('pointermove', swipeHandleMove)
+    window.addEventListener('pointerup', swipeHandleUp)
   }
 
   const swipeHandleMove = (e) => {
-    // console.log(e.clientX)
     if (!eventStart.current) return false
 
     const posFactorLeft = 6
@@ -91,15 +77,14 @@ function DiffIFrames ({
       return false
     }
 
-    console.log('mouse move', eventStart.current)
-    setSwiperPos(currentSwiperPos)
+    // setSwiperPos(currentSwiperPos)
+    handleSwiperPosChange(currentSwiperPos)
   }
 
   const swipeHandleUp = (e) => {
     eventStart.current = false
-    console.log('exit', eventStart.current)
-    window.removeEventListener('mousemove', swipeHandleMove)
-    window.removeEventListener('mouseup', swipeHandleUp)
+    window.removeEventListener('pointermove', swipeHandleMove)
+    window.removeEventListener('pointerup', swipeHandleUp)
   }
 
   return (
@@ -122,7 +107,7 @@ function DiffIFrames ({
           className="mockup-browser border bg-base-300 left-iframe overflow-hidden h-full"
           style={{
             opacity: debounceInputs.sideBySide || debounceInputs.overlayMode === 'swipe' ? 1 : debounceInputs.opacity,
-            width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? `${swiperPos + 18}px` : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
+            width: (!debounceInputs.sideBySide && debounceInputs.overlayMode === 'swipe') ? `${debounceInputs.swiperPos + 18}px` : (parseInt(debounceInputs.iWidth) === 0 ? '100%' : `${debounceInputs.iWidth}px`)
           }}
         >
           <div
@@ -213,10 +198,10 @@ function DiffIFrames ({
         {/* swiper handle */}
         <div
           className={`swiper-divider absolute z-10 w-8 opacity-70 cursor-ew-resize ${debounceInputs.sideBySide || debounceInputs.overlayMode !== 'swipe' ? 'hidden' : ''}`}
-          onMouseDown={swipeHandleDown}
-          onMouseLeave={(e) => { console.log('leave'); swipeHandleUp(e) }}
+          onPointerDown={swipeHandleDown}
+          onPointerLeave={swipeHandleUp}
           style={{
-            left: `${swiperPos}px`,
+            left: `${debounceInputs.swiperPos}px`,
             height: `${debounceInputs.iHeightDebounce}px`
           }}
         >
@@ -230,7 +215,7 @@ function DiffIFrames ({
 DiffIFrames.propTypes = {
   debounceInputs: PropTypes.object.isRequired,
   handleITopChange: PropTypes.func.isRequired,
-  handleIWidthChange: PropTypes.func.isRequired
+  handleSwiperPosChange: PropTypes.func.isRequired
 }
 
 export default DiffIFrames
