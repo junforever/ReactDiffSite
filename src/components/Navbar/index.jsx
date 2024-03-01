@@ -17,8 +17,8 @@ function Navbar () {
   }
 
   return (
-    <div className="navbar bg-base-300 rounded-box pr-3">
-      <div className="navbar-start">
+    <div className="navbar bg-base-300 rounded-box pr-3 max-[370px]:flex-col">
+      <div className="navbar-start max-[370px]:w-auto">
         <Modal
           btnText="How to use this tool?"
           title="How to use the Site Diff Tool"
@@ -36,7 +36,7 @@ function Navbar () {
       <div className="navbar-center">
         <h2 className="text-xl font-medium tracking-wider">Bankrate Site Diff Tool</h2>
       </div>
-      <div className="navbar-end">
+      <div className="navbar-end max-[370px]:w-auto">
         <label className="swap swap-rotate">
           {/* theme switcher */}
           <input

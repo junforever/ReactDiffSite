@@ -8,7 +8,7 @@ function DiffInput ({
     <section className="flex flex-col w-full lg:flex-row">
       {/* Right side url */}
       <div className="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center">
-        <label className="form-control w-full max-w-xs">
+        <label className="form-control w-full max-w-xs px-4 sm:px-0">
           <div className="flex flex-row gap-x-2">
             <input type="text"
               placeholder="Website URL"
@@ -31,7 +31,7 @@ function DiffInput ({
 
       {/* Left side url */}
       <div className="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center">
-        <label className="form-control w-full max-w-xs">
+        <label className="form-control w-full max-w-xs px-4 sm:px-0">
           <div className="flex flex-row gap-x-2">
             <input type="text"
               placeholder="Another Website URL"
