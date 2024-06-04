@@ -1,3 +1,4 @@
+/** CONFIG VARIABLES */
 export const DEFAULT_IHEIGHT = 8200
 export const MIN_IHEIGHT = 1500
 export const MAX_IHEIGHT = 25000
@@ -33,6 +34,13 @@ export const DEFAULT_STICKY_SETTINGS_CONF = {
   position: '',
   visibility: true
 }
+
+export const IMPORT_SETTINGS = {
+  urls: DEFAULT_DIFF_INPUT,
+  settings: DEFAULT_DIFF_SETTINGS
+}
+
+/** GLOBAL FUNCTIONS */
 
 export function isValidUrl (url) {
   if (!url) return ''
@@ -97,4 +105,52 @@ function checkValidUrl (url) {
     '(\\#[-a-z\\d_]*)?$', 'i') // fragment locator
 
   return urlPattern.test(url)
+}
+
+export function currentDateTimeString () {
+  const dateFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false
+  }
+
+  const formatter = new Intl.DateTimeFormat('en-US', dateFormatOptions)
+  // this return dd_mm_yy_hh_mim_sec eg: 5_1_2024_14_57_31
+  return formatter.format(Date.now()).replaceAll('/', '_').replaceAll(', ', '_').replaceAll(':', '_')
+}
+
+export function parseJSON (jsonString, errorAdditionalText = '') {
+  if (jsonString === '' || jsonString === null) {
+    return {
+      data: null,
+      err: 'The json string is empty'
+    }
+  }
+
+  try {
+    const jsonObj = JSON.parse(jsonString)
+    return {
+      data: jsonObj,
+      err: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      err: `There was an error parsing the json string: ${err} ${errorAdditionalText && `<br>${errorAdditionalText}`}`
+    }
+  }
+}
+
+export function objectPropertiesCompare (baseObj, objToCompare) {
+  return Object.keys(baseObj).every(prop => {
+    if (typeof baseObj[prop] === 'object') {
+      const resp = objectPropertiesCompare(baseObj[prop], objToCompare[prop])
+      if (!resp) return false
+    }
+    return Object.hasOwn(objToCompare, prop) && typeof baseObj[prop] === typeof objToCompare[prop]
+  })
 }

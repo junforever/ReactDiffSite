@@ -170,6 +170,15 @@ function App () {
     setDiffSettings(diffSettingsChanged)
   }
 
+  // import settings
+  const handleImportSettings = (data) => {
+    console.log(data)
+    // setDiffInput({
+    //   leftUrl: '',
+    //   rightUrl: ''
+    // })
+  }
+
   return (
     <div className="flex flex-col gap-y-6 p-4">
       <Navbar />
@@ -183,6 +192,7 @@ function App () {
         handleDiffSettingsChange={ handleDiffSettingsChange }
         handleOnPixelAdjusterChange= { handleOnPixelAdjusterChange }
         handleResetSettings= { handleResetSettings }
+        handleImportSettings= { handleImportSettings }
       />
       <DiffIFrames debounceInputs= {
           {

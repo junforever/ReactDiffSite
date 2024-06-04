@@ -47,7 +47,6 @@ The Site Diff Tool is a websites comparison tool built with React. It enables us
 6. If a vertical adjustment is needed to make the iframes match, use the controls inside of 'Iframes Vertical Shifting' section.
 7. If you want to reset all the settings to their default values, click on 'Reset Settings to Default' button.
 
-**Important Note:** Not all websites can be iframed due to their own configurations. If you encounter any issues, please try another website.
 
 ## Additional Context
 
@@ -59,4 +58,11 @@ Open the project folder using the terminal and run this command:
 
 `npm i && npm run dev`
 
-**For any questions please reach out BSE team**
+**Important Notes:**
+- Not all websites can be iframed due to their own configurations. If you encounter any issues, please try another website.
+- For Unix/Linux/macOS users, I recommend to use this configuration `git config --global core.autocrlf input` to avoid any issues and unnecessary LF/CRLF conversions of the end of line characters.
+
+**This project was based on this [pianomister-diffsite-tool](https://github.com/pianomister/diffsite) that use vanilla javascript only.**
+
+
+**For any questions please reach out me on github**

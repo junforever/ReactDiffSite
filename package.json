@@ -1,5 +1,5 @@
 {
-  "name": "diffsite",
+  "name": "reactdiffsite",
   "description": "A tool to visually compare two versions of a website.",
   "private": true,
   "version": "1.0.0",

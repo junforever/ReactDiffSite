@@ -5,13 +5,16 @@ import { GrPowerReset } from 'react-icons/gr'
 import { IconContext } from 'react-icons'
 import { MIN_IHEIGHT, MAX_IHEIGHT } from '../../utils'
 import PixelAdjuster from '../PixelAdjuster'
+import DiffExpSettings from '../DiffExpSettings'
+import DiffImpSettings from '../DiffImpSettings'
 
 function DiffSettings ({
   diffSettings,
   stickySettingsConf,
   handleDiffSettingsChange,
   handleOnPixelAdjusterChange,
-  handleResetSettings
+  handleResetSettings,
+  handleImportSettings
 }) {
   const btnStyles = {
     backgroundColor: 'slategrey',
@@ -53,18 +56,16 @@ function DiffSettings ({
             onChange={handleDiffSettingsChange}
           >
             <option value="0" data-breakpoint="full-width">Full Width</option>
-            <optgroup label="Classy Breakpoints">
-              <option value="599" data-breakpoint="classy-mb">Classy Mobile</option>
-              <option value="999" data-breakpoint="classy-sm">Classy Small</option>
-              <option value="1438" data-breakpoint="classy-md">Classy Medium</option>
-              {/* <option value="1500" data-breakpoint="classy-lg">Classy Large</option> */}
+            <optgroup label="Breakpoints A">
+              <option value="599" data-breakpoint="classy-mb">Mobile (min 599px)</option>
+              <option value="999" data-breakpoint="classy-sm">Small (min 999px)</option>
+              <option value="1438" data-breakpoint="classy-md">Medium (min 1438px)</option>
             </optgroup>
 
-            <optgroup label="Classy Breakpoints">
-              <option value="639" data-breakpoint="treasury-mb">Treasury Mobile</option>
-              <option value="879" data-breakpoint="treasury-sm">Treasury Small</option>
-              <option value="1119" data-breakpoint="treasury-md">Treasury Medium</option>
-              {/* <option value="1439" data-breakpoint="treasury-lg">Treasury Large</option> */}
+            <optgroup label="Breakpoints B">
+              <option value="639" data-breakpoint="treasury-mb">Mobile (min 639px)</option>
+              <option value="879" data-breakpoint="treasury-sm">Small (min 879px) </option>
+              <option value="1119" data-breakpoint="treasury-md">Medium (min 1119px)</option>
             </optgroup>
 
             <optgroup label="Mobile Devices">
@@ -183,19 +184,21 @@ function DiffSettings ({
         <div className="flex flex-col gap-y-4 sm:gap-y-0 sm:flex-row justify-center gap-x-8">
           <PixelAdjuster
             pixelAdjusterSettings={{ name: 'leftIFrameTop', value: diffSettings.leftIFrameTop, innerLabel: 'L' }}
-            handleOnPixelAdjusterChange={handleOnPixelAdjusterChange}
+            handleOnPixelAdjusterChange={ handleOnPixelAdjusterChange }
           />
           <PixelAdjuster
             pixelAdjusterSettings={{ name: 'rightIFrameTop', value: diffSettings.rightIFrameTop, innerLabel: 'R' }}
-            handleOnPixelAdjusterChange={handleOnPixelAdjusterChange}
+            handleOnPixelAdjusterChange={ handleOnPixelAdjusterChange }
           />
         </div>
       </div>
 
       {/* third row settings */}
-      <div className="flex flex-row items-center justify-center mt-4">
+      <div className="flex flex-row items-center justify-center mt-4 gap-x-2">
+        <DiffImpSettings handleImportSettings={ handleImportSettings } />
+        <DiffExpSettings />
         <button className="btn" onClick={() => handleResetSettings()}>
-          Reset Settings to Default
+          Reset Settings
           <IconContext.Provider value={{ className: 'text-xl' }}>
             <GrPowerReset />
           </IconContext.Provider>
@@ -210,6 +213,7 @@ DiffSettings.propTypes = {
   stickySettingsConf: PropTypes.object.isRequired,
   handleDiffSettingsChange: PropTypes.func.isRequired,
   handleOnPixelAdjusterChange: PropTypes.func.isRequired,
-  handleResetSettings: PropTypes.func.isRequired
+  handleResetSettings: PropTypes.func.isRequired,
+  handleImportSettings: PropTypes.func.isRequired
 }
 export default DiffSettings
