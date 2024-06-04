@@ -62,7 +62,6 @@ Open the project folder using the terminal and run this command:
 - Not all websites can be iframed due to their own configurations. If you encounter any issues, please try another website.
 - For Unix/Linux/macOS users, I recommend to use this configuration `git config --global core.autocrlf input` to avoid any issues and unnecessary LF/CRLF conversions of the end of line characters.
 
-**This project was based on this [pianomister-diffsite-tool](https://github.com/pianomister/diffsite) that use vanilla javascript only.**
-
-
 **For any questions please reach out me on github**
+
+## This project was based on this [pianomister-diffsite-tool](https://github.com/pianomister/diffsite) that use vanilla javascript only.
