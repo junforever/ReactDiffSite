@@ -38,6 +38,7 @@ function DiffSettings ({
             value={ diffSettings.iHeight }
             step="250"
             className="range range-primary"
+            data-cast="int"
             onChange={handleDiffSettingsChange}
           />
           <div className="label self-center">
@@ -52,6 +53,7 @@ function DiffSettings ({
           <select
             name="iWidth"
             className="select select-bordered"
+            data-cast="int"
             value={diffSettings.iWidth}
             onChange={handleDiffSettingsChange}
           >
@@ -167,6 +169,8 @@ function DiffSettings ({
             value={diffSettings.opacity}
             step="0.01"
             className={`range ${diffSettings.sideBySide || diffSettings.overlayMode === 'swipe' ? '' : 'range-primary'}`}
+            data-cast="float"
+            data-decimals="2"
             onChange={handleDiffSettingsChange}
             disabled={diffSettings.sideBySide || diffSettings.overlayMode === 'swipe'}
           />
@@ -194,7 +198,7 @@ function DiffSettings ({
       </div>
 
       {/* third row settings */}
-      <div className="flex flex-row items-center justify-center mt-4 gap-x-2">
+      <div className="flex flex-col sm:flex-row items-center justify-center mt-4 gap-x-2 gap-y-4 sm:gap-y-0">
         <DiffImpSettings handleImportSettings={ handleImportSettings } />
         <DiffExpSettings />
         <button className="btn" onClick={() => handleResetSettings()}>

@@ -1,16 +1,14 @@
 import { FaFileExport } from 'react-icons/fa'
 import { IconContext } from 'react-icons'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, currentDateTimeString } from '../../utils'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, currentDateTimeString, URLS_PROPERTY_NAME, SETTINGS_PROPERTY_NAME } from '../../utils'
 
 function DiffExpSettings () {
   const handleExpSettings = () => {
     const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
     const diffInputLS = window.localStorage.getItem('diffInputLS')
-    const settings = (diffSettingsLS === null) ? DEFAULT_DIFF_SETTINGS : JSON.parse(diffSettingsLS)
-    const urls = (diffInputLS === null) ? DEFAULT_DIFF_INPUT : JSON.parse(diffInputLS)
     const dataToExport = {
-      urls,
-      settings
+      [URLS_PROPERTY_NAME]: (diffInputLS === null) ? DEFAULT_DIFF_INPUT : JSON.parse(diffInputLS),
+      [SETTINGS_PROPERTY_NAME]: (diffSettingsLS === null) ? DEFAULT_DIFF_SETTINGS : JSON.parse(diffSettingsLS)
     }
 
     const parsedJson = JSON.stringify(dataToExport, null, 2)

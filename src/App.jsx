@@ -5,8 +5,21 @@ import DiffIFrames from './components/DiffIFrames'
 import Navbar from './components/Navbar'
 import BackToTop from './components/BackToTop'
 import { useDebounce } from './hooks/useDebounce'
-import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, DEFAULT_STICKY_SETTINGS_CONF, BTT_TOP_DISTANCE, handleWidthResize } from './utils'
+import { useDebounceFunc } from './hooks/useDebounceFunc'
+import { DEFAULT_DIFF_INPUT, DEFAULT_DIFF_SETTINGS, LARGE_BREAKPOINT, DEFAULT_STICKY_SETTINGS_CONF, BTT_TOP_DISTANCE, handleWidthResize, castElementValue, URLS_PROPERTY_NAME, SETTINGS_PROPERTY_NAME } from './utils'
 import ShowHideButton from './components/ShowHideButton'
+
+const loadDiffSettings = (() => {
+  const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
+  let settings = null
+  if (diffSettingsLS !== null) {
+    settings = JSON.parse(diffSettingsLS)
+  }
+
+  return settings !== null
+    ? { ...settings, ...handleWidthResize(settings) }
+    : DEFAULT_DIFF_SETTINGS
+})()
 
 function App () {
   // activate the resizeObserver only the first time
@@ -23,9 +36,21 @@ function App () {
 
     return () => {
       resizeObserver.unobserve(document.documentElement)
+      resizeObserver.disconnect()
       window.removeEventListener('scroll', scrollEventListener)
     }
   }, [])
+
+  /* settings states */
+  const [diffInput, setDiffInput] = useState(
+    () => {
+      const diffInputLS = window.localStorage.getItem('diffInputLS')
+      return diffInputLS !== null ? JSON.parse(diffInputLS) : DEFAULT_DIFF_INPUT
+    }
+  )
+
+  const currentDiffSettings = useRef(loadDiffSettings)
+  const [diffSettings, setDiffSettings] = useState(loadDiffSettings)
 
   /* visualization states */
   const [bttIsVisible, setBttIsVisible] = useState(false)
@@ -71,28 +96,6 @@ function App () {
     setDiffSettings(diffSettingsChanged)
   }
 
-  const loadDiffSettings = (() => {
-    const diffSettingsLS = window.localStorage.getItem('diffSettingsLS')
-    let settings = null
-    if (diffSettingsLS !== null) {
-      settings = JSON.parse(diffSettingsLS)
-    }
-
-    return settings !== null
-      ? { ...settings, ...handleWidthResize(settings) }
-      : DEFAULT_DIFF_SETTINGS
-  })()
-
-  const [diffInput, setDiffInput] = useState(
-    () => {
-      const diffInputLS = window.localStorage.getItem('diffInputLS')
-      return diffInputLS !== null ? JSON.parse(diffInputLS) : DEFAULT_DIFF_INPUT
-    }
-  )
-
-  const currentDiffSettings = useRef(loadDiffSettings)
-  const [diffSettings, setDiffSettings] = useState(loadDiffSettings)
-
   const handleDiffInputChange = (e) => {
     const diffInputChanged = {
       ...diffInput,
@@ -105,7 +108,7 @@ function App () {
   const handleDiffSettingsChange = (e) => {
     let diffSettingsChanged = {
       ...currentDiffSettings.current,
-      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
+      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : castElementValue(e.target)
     }
 
     if (e.target.name === 'sideBySide') {
@@ -122,7 +125,7 @@ function App () {
       diffSettingsChanged = {
         ...currentDiffSettings.current,
         ...iConf,
-        [e.target.name]: e.target.value
+        [e.target.name]: castElementValue(e.target)
       }
     }
 
@@ -134,22 +137,12 @@ function App () {
   const handleITopChange = (iframe) => {
     const iTopChanged = {
       ...diffSettings,
-      [iframe]: '0'
+      [iframe]: 0
     }
 
     currentDiffSettings.current = iTopChanged
     setDiffSettings(iTopChanged)
     window.localStorage.setItem('diffSettingsLS', JSON.stringify(iTopChanged))
-  }
-
-  const handleOnPixelAdjusterChange = (e) => {
-    const diffSettingsChanged = {
-      ...diffSettings,
-      [e.currentTarget.name]: e.currentTarget.dataset.action === 'change' ? e.currentTarget.value : (e.currentTarget.dataset.action === 'up' ? parseInt(diffSettings[e.currentTarget.name]) - 1 : parseInt(diffSettings[e.currentTarget.name]) + 1)
-    }
-    currentDiffSettings.current = diffSettingsChanged
-    setDiffSettings(diffSettingsChanged)
-    window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsChanged))
   }
 
   const handleResetSettings = () => {
@@ -172,11 +165,52 @@ function App () {
 
   // import settings
   const handleImportSettings = (data) => {
-    console.log(data)
-    // setDiffInput({
-    //   leftUrl: '',
-    //   rightUrl: ''
-    // })
+    setDiffInput(data[URLS_PROPERTY_NAME])
+    window.localStorage.setItem('diffInputLS', JSON.stringify(data[URLS_PROPERTY_NAME]))
+
+    // validate the document width to avoid swiper issues
+    const validatedValues = data[SETTINGS_PROPERTY_NAME]
+
+    if (document.documentElement.clientWidth <= LARGE_BREAKPOINT) {
+      validatedValues.sideBySide = false
+    }
+
+    const iConf = handleWidthResize(validatedValues)
+    const diffSettingsInitialized = {
+      ...validatedValues,
+      ...iConf
+    }
+
+    setDiffSettings(diffSettingsInitialized)
+    currentDiffSettings.current = diffSettingsInitialized
+    window.localStorage.setItem('diffSettingsLS', JSON.stringify(diffSettingsInitialized))
+  }
+
+  // handle pixel adjuster
+
+  const debouncedPixelAdjusterValue = useDebounceFunc((op) => {
+    let parsedValue = parseInt(op.settings[op.propName], 10)
+
+    if (isNaN(parsedValue) || op.currentValue.trim() === '') {
+      setDiffSettings({
+        ...op.settings,
+        [op.propName]: 0
+      })
+      parsedValue = 0
+    }
+
+    op.settings[op.propName] = parsedValue
+    currentDiffSettings.current = op.settings
+    window.localStorage.setItem('diffSettingsLS', JSON.stringify(op.settings))
+  }, 500) // Debounce delay de 1000ms
+
+  const handleOnPixelAdjusterChange = (e) => {
+    const diffSettingsChanged = {
+      ...diffSettings,
+      [e.currentTarget.name]: e.currentTarget.dataset.action === 'change' ? e.currentTarget.value : (e.currentTarget.dataset.action === 'up' ? parseInt(diffSettings[e.currentTarget.name]) - 1 : parseInt(diffSettings[e.currentTarget.name]) + 1)
+    }
+    setDiffSettings(diffSettingsChanged)
+    debouncedPixelAdjusterValue({ settings: diffSettingsChanged, propName: e.currentTarget.name, currentValue: e.currentTarget.value })
   }
 
   return (

@@ -49,7 +49,7 @@ const Modal = forwardRef((
 Modal.displayName = 'Modal'
 
 Modal.propTypes = {
-  showButton: PropTypes.bool.isRequired,
+  showButton: PropTypes.bool,
   btnText: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired

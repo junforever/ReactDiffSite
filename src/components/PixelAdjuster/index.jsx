@@ -8,6 +8,10 @@ function PixelAdjuster (
     handleOnPixelAdjusterChange
   }
 ) {
+  const handleInputChange = (e) => {
+    if (/^-?\d*$/.test(e.target.value)) handleOnPixelAdjusterChange(e)
+  }
+
   return (
     <div className="flex flex-row">
       <button
@@ -27,7 +31,7 @@ function PixelAdjuster (
           maxLength="4"
           className="grow w-14"
           name={pixelAdjusterSettings.name}
-          onChange={ handleOnPixelAdjusterChange }
+          onChange={ handleInputChange }
           value={pixelAdjusterSettings.value}
         />
         <span className="badge badge-primary">px</span>

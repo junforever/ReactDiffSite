@@ -14,7 +14,7 @@ export const DEFAULT_DIFF_INPUT = {
 
 export const DEFAULT_IFRAME_SETTINGS = {
   iFrameContainerWidth: '100%',
-  iFrameContainerPaddingRight: '0',
+  iFrameContainerPaddingRight: 0,
   iFrameJustifyContent: 'center',
   swiperPos: window.innerWidth / 2
 }
@@ -25,8 +25,8 @@ export const DEFAULT_DIFF_SETTINGS = {
   sideBySide: false,
   overlayMode: 'swipe',
   opacity: 1,
-  leftIFrameTop: '0',
-  rightIFrameTop: '0',
+  leftIFrameTop: 0,
+  rightIFrameTop: 0,
   ...DEFAULT_IFRAME_SETTINGS
 }
 
@@ -35,9 +35,12 @@ export const DEFAULT_STICKY_SETTINGS_CONF = {
   visibility: true
 }
 
+export const URLS_PROPERTY_NAME = 'urls'
+export const SETTINGS_PROPERTY_NAME = 'settings'
+
 export const IMPORT_SETTINGS = {
-  urls: DEFAULT_DIFF_INPUT,
-  settings: DEFAULT_DIFF_SETTINGS
+  [URLS_PROPERTY_NAME]: DEFAULT_DIFF_INPUT,
+  [SETTINGS_PROPERTY_NAME]: DEFAULT_DIFF_SETTINGS
 }
 
 /** GLOBAL FUNCTIONS */
@@ -153,4 +156,19 @@ export function objectPropertiesCompare (baseObj, objToCompare) {
     }
     return Object.hasOwn(objToCompare, prop) && typeof baseObj[prop] === typeof objToCompare[prop]
   })
+}
+
+export function castElementValue (element) {
+  if (!element.hasAttribute('data-cast')) return element.value
+
+  let decimals = 0
+
+  switch (element.dataset.cast) {
+    case 'int':
+      return isNaN(element.value) ? 0 : parseInt(element.value)
+
+    case 'float':
+      decimals = (element.hasAttribute('data-decimals') && isNumber(element.dataset.decimals)) ? parseInt(element.dataset.decimals) : 0
+      return isNaN(element.value) ? 0 : parseFloat(parseFloat(element.value).toFixed(decimals))
+  }
 }

@@ -31,6 +31,7 @@ function Navbar () {
           Some predefined breakpoints are available as well as other common mobile devices, for a responsive view, use the <u>full width</u> option.<br>
           There are two themes available, the dark and light themes, the default theme is dark.<br>
           A functionality to move the iframes' content vertically was included, if a vertical adjustment is needed to make the iframes match between them.<br>
+          This tool is handy for comparing a QA/local website to a production website to identify possible visual issues or differences.<br>
           <b><u>Important Note</u></b>: Not all websites can be iframed because of their own configuration, if you encounter any issues, please try another website.`}
         />
       </div>

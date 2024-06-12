@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Site Diff Tool is a websites comparison tool built with React. It enables users to compare two sites side by side or with an overlay effect. The tool provides various customization options and themes to enhance the comparison experience.
+The Site Diff Tool is a websites comparison tool built with React. It enables users to compare two sites side by side or with an overlay effect, you can use it to compare your qa site vs your production site. The tool provides various customization options and themes to enhance the comparison experience.
 
 ## Built With
 

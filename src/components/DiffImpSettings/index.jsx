@@ -26,27 +26,13 @@ function DiffImpSettings ({
       const resp = parseJSON(json)
       if (resp.err === null) {
         // verify if the json file has the correct structure
-
-        // if (!resp.data.hasOwnProperty('urls') || !resp.data.hasOwnProperty('settings')) {
-        //   if (appModal.current) {
-        //     setModalProps({
-        //       btnText: '',
-        //       title: 'Error!!',
-        //       showButton: false,
-        //       content: 'The json file hasn\'t the correct structure',
-        //     })
-        //     appModal.current.handleModalOpen()
-        //   }
-        //   return
-        // }
-
         if (!objectPropertiesCompare(IMPORT_SETTINGS, resp.data)) {
           if (appModal.current) {
             setModalProps({
               btnText: '',
               title: 'Error!!',
               showButton: false,
-              content: 'The json file hasn\'t the correct structure'
+              content: 'The json file hasn\'t the correct structure, please review that all properties exists and the data types are the right ones.'
             })
             appModal.current.handleModalOpen()
           }
